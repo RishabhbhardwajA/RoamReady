@@ -1,0 +1,25 @@
+{
+  "name": "roamready-travel-gear",
+  "version": "1.0.0",
+  "description": "RoamReady — Production E-Commerce Platform for Luggage Accessories & Travel Essentials",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "build:frontend": "cd frontend && npm run build",
+    "test:api": "node backend/tests/api.test.js"
+  },
+  "keywords": [
+    "travel-gear",
+    "luggage-accessories",
+    "tsa-lock",
+    "compression-cubes",
+    "nextjs",
+    "express",
+    "mongodb",
+    "ecommerce"
+  ],
+  "author": "RoamReady Team",
+  "license": "MIT"
+}
