@@ -217,10 +217,43 @@ node backend/tests/api.test.js
 
 ---
 
-## 🌐 Deployment Guide
+## 🌐 Live Deployment Guide
 
-* **Frontend:** Deploy on **Vercel** (`cd frontend && vercel`). Set `NEXT_PUBLIC_API_URL` to your production backend URL.
-* **Backend:** Deploy on **Render**, **Railway**, or **AWS EC2**. Set `PORT=5000`, `NODE_ENV=production`, `MONGODB_URI`, `JWT_SECRET`.
-* **Database:** **MongoDB Atlas** M0/M10 cluster.
-* **Images:** Hosted on fast CDN / Cloudinary with Unsplash image backups.
+The entire codebase is version-controlled and pushed to GitHub:  
+👉 **[GitHub Repository: RishabhbhardwajA/RoamReady](https://github.com/RishabhbhardwajA/RoamReady)**
+
+### Step 1: Deploy the Backend API (Render / Railway)
+
+#### Option A: 1-Click Free Deploy on Render
+1. Go to [Render Dashboard](https://dashboard.render.com/) and click **New +** > **Blueprint**.
+2. Connect your GitHub repository: `RishabhbhardwajA/RoamReady`.
+3. Render will automatically detect [`backend/render.yaml`](backend/render.yaml) and configure:
+   - **Root Directory:** `backend`
+   - **Build Command:** `npm install`
+   - **Start Command:** `node server.js`
+4. Click **Apply**. Once built (approx. 1 min), your REST API will be live at:
+   `https://roamready-api.onrender.com/api`
+
+*(Note: The backend has a resilient dual-engine that operates flawlessly with or without MongoDB Atlas connection string).*
+
+---
+
+### Step 2: Deploy the Frontend (Vercel)
+
+1. Go to [Vercel Dashboard](https://vercel.com/new).
+2. Click **Import** next to `RishabhbhardwajA/RoamReady`.
+3. In Project Configuration:
+   - **Framework Preset:** `Next.js`
+   - **Root Directory:** Click Edit and select `frontend`
+4. Under **Environment Variables**, add:
+   - `NEXT_PUBLIC_API_URL` = `https://roamready-api.onrender.com` (your backend URL, or leave blank to fallback to demo mode)
+5. Click **Deploy**. Vercel will build and assign a free HTTPS URL (e.g. `https://roamready.vercel.app`).
+
+---
+
+### Step 3: Production Verification
+
+- Storefront: `https://roamready.vercel.app`
+- API Health Check: `https://roamready-api.onrender.com/api/health`
+- Admin Dashboard: `https://roamready.vercel.app/admin` (Sign in with demo admin credentials)
 

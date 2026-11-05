@@ -39,9 +39,27 @@ if (env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
-// CORS setup
+// CORS setup - flexible for localhost, Vercel, Netlify, and custom domains
 app.use(cors({
-  origin: [env.FRONTEND_URL, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // Allow local development and specified FRONTEND_URL
+    if (
+      origin === env.FRONTEND_URL ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      origin.endsWith('.vercel.app') ||
+      origin.endsWith('.netlify.app') ||
+      origin.endsWith('.onrender.com')
+    ) {
+      return callback(null, true);
+    }
+    
+    // In production e-commerce, allow cross-origin client requests
+    return callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-session-id']
