@@ -17,7 +17,8 @@ export const BackendConnectionStatus: React.FC = () => {
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [dismissed, setDismissed] = useState<boolean>(false);
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const rawApiUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000').trim().replace(/\/+$/, '');
+  const apiBase = rawApiUrl.endsWith('/api') ? rawApiUrl.slice(0, -4) : rawApiUrl;
 
   const checkHealth = async () => {
     setStatus('checking');
@@ -199,3 +200,4 @@ export const BackendConnectionStatus: React.FC = () => {
     </div>
   );
 };
+

@@ -65,6 +65,16 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'x-session-id']
 }));
 
+// Normalize double /api/api requests in case of frontend env URL misconfiguration
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api/api/')) {
+    req.url = req.url.replace('/api/api/', '/api/');
+  } else if (req.url === '/api/api') {
+    req.url = '/api';
+  }
+  next();
+});
+
 // Basic Rate Limiting
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
