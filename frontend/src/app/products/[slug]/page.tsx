@@ -174,10 +174,10 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
   const comparing = isComparing(product.slug);
 
   return (
-    <div className="bg-slate-50 min-h-screen py-8 sm:py-12">
+    <div className="min-h-screen py-8 sm:py-12 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb Navigation */}
-        <nav className="text-xs text-slate-500 mb-6 flex items-center gap-2 overflow-x-auto whitespace-nowrap">
+        <nav className="text-xs text-slate-500 mb-6 flex items-center gap-2 overflow-x-auto whitespace-nowrap bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/80 w-fit">
           <Link href="/" className="hover:text-brand-600">Home</Link>
           <span>/</span>
           <Link href="/products" className="hover:text-brand-600">Essentials</Link>
@@ -190,11 +190,11 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         </nav>
 
         {/* Top Product View: Gallery (Left) & Buy Box (Right) */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="glass-panel rounded-4xl p-6 sm:p-10 border border-white/80 shadow-glass grid grid-cols-1 lg:grid-cols-12 gap-10 bg-white/75 backdrop-blur-xl">
           {/* Left Column: Image Gallery & Zoom */}
           <div className="lg:col-span-7 space-y-4">
             <div
-              className="relative aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 cursor-zoom-in"
+              className="relative aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100/60 border border-white/80 cursor-zoom-in shadow-xs"
               onClick={() => setIsZoomed(!isZoomed)}
             >
               <img
@@ -208,12 +208,12 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-col gap-2 pointer-events-none">
                 {product.badge && (
-                  <span className="bg-obsidian-950 text-amber-accent text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                  <span className="bg-obsidian-950/85 backdrop-blur-md border border-white/20 text-amber-accent text-xs font-extrabold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md">
                     {product.badge}
                   </span>
                 )}
                 {product.discountPercent > 0 && (
-                  <span className="bg-red-600 text-white text-xs font-extrabold px-2.5 py-0.5 rounded-full shadow-md">
+                  <span className="bg-rose-600/90 backdrop-blur-md border border-white/20 text-white text-xs font-extrabold px-3 py-1 rounded-full shadow-md">
                     {product.discountPercent}% OFF
                   </span>
                 )}
@@ -225,11 +225,11 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   e.stopPropagation();
                   toggleWishlist(product.slug);
                 }}
-                className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md ${
-                  isFavorited ? 'bg-red-50 text-red-500 scale-110' : 'bg-white text-slate-400 hover:text-red-500'
+                className={`absolute top-4 right-4 w-11 h-11 rounded-full flex items-center justify-center transition-all shadow-md backdrop-blur-md border border-white/80 ${
+                  isFavorited ? 'bg-rose-50 text-rose-500 scale-110 border-rose-200' : 'bg-white/80 text-slate-400 hover:text-rose-500 hover:bg-white'
                 }`}
               >
-                <Heart className={`w-5 h-5 ${isFavorited ? 'fill-red-500' : ''}`} />
+                <Heart className={`w-5 h-5 ${isFavorited ? 'fill-rose-500' : ''}`} />
               </button>
             </div>
 
@@ -243,7 +243,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     className={`w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all flex-shrink-0 ${
                       selectedImage === img
                         ? 'border-brand-600 scale-105 shadow-md'
-                        : 'border-slate-200 hover:border-slate-300'
+                        : 'border-white/80 hover:border-slate-300'
                     }`}
                   >
                     <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
@@ -270,7 +270,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
               {/* Rating & Reviews */}
               <div className="flex items-center gap-3 mt-3">
-                <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-lg text-xs font-bold text-slate-800">
+                <div className="flex items-center gap-1 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-slate-800 border border-slate-200/60 shadow-xs">
                   <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
                   <span>{product.rating}</span>
                 </div>
@@ -280,8 +280,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               </div>
             </div>
 
-            {/* Price Box */}
-            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
+            {/* Price Box (Curvy Glass Card) */}
+            <div className="p-5 glass-card rounded-3xl bg-white/70 border border-white/80 shadow-xs backdrop-blur-md">
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-extrabold text-slate-900">
                   {formatINR(product.price)}
@@ -292,12 +292,12 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   </span>
                 )}
                 {product.discountPercent > 0 && (
-                  <span className="text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-extrabold text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-200/50">
                     Save {formatINR(product.originalPrice - product.price)}
                   </span>
                 )}
               </div>
-              <span className="text-[11px] text-slate-400 block mt-1">
+              <span className="text-[11px] text-slate-400 block mt-1 font-light">
                 Inclusive of all taxes &bull; Free express delivery on orders over ₹999
               </span>
             </div>
@@ -319,8 +319,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                       }}
                       className={`group flex items-center gap-2 p-1.5 pr-3 rounded-full border transition-all ${
                         selectedVariant?.id === v.id
-                          ? 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-500 ring-offset-1'
-                          : 'border-slate-200 hover:border-slate-300'
+                          ? 'border-brand-600 bg-brand-50/80 ring-2 ring-brand-500 ring-offset-1'
+                          : 'border-slate-200 hover:border-slate-300 bg-white/60'
                       }`}
                     >
                       <span
@@ -338,17 +338,17 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             <div className="flex items-center gap-4">
               <div className="space-y-1">
                 <span className="text-xs font-bold text-slate-900 block">Quantity</span>
-                <div className="flex items-center border border-slate-300 rounded-xl bg-white shadow-xs">
+                <div className="flex items-center border border-slate-200/80 rounded-full bg-white/90 shadow-xs px-1">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3 py-2 text-slate-600 hover:bg-slate-100 transition-colors"
+                    className="p-1 px-3 text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                   >
                     -
                   </button>
-                  <span className="px-4 text-xs font-bold text-slate-900">{quantity}</span>
+                  <span className="px-3 text-xs font-bold text-slate-900">{quantity}</span>
                   <button
                     onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                    className="px-3 py-2 text-slate-600 hover:bg-slate-100 transition-colors"
+                    className="p-1 px-3 text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                   >
                     +
                   </button>
@@ -357,9 +357,9 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
               <div className="space-y-1">
                 <span className="text-xs font-bold text-slate-900 block">Availability</span>
-                <div className="text-xs text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl font-bold flex items-center gap-1.5">
+                <div className="text-xs text-emerald-700 bg-emerald-50/90 backdrop-blur-md px-3.5 py-2 rounded-full font-bold flex items-center gap-1.5 border border-emerald-200/60">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Ready for Same-Day Dispatch</span>
+                  <span>Ready for Dispatch</span>
                 </div>
               </div>
             </div>
@@ -369,7 +369,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               <button
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className="w-full bg-brand-600 hover:bg-brand-500 active:scale-98 text-white font-extrabold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md text-sm sm:text-base"
+                className="w-full bg-brand-600 hover:bg-brand-500 active:scale-98 text-white font-extrabold py-4 px-6 rounded-full flex items-center justify-center gap-2 transition-all shadow-md text-sm sm:text-base border border-white/20"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>Add to Travel Bag</span>
@@ -378,7 +378,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               <button
                 onClick={handleBuyNow}
                 disabled={product.stock === 0}
-                className="w-full bg-obsidian-950 hover:bg-black active:scale-98 text-white font-extrabold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md text-sm sm:text-base"
+                className="w-full bg-obsidian-950 hover:bg-black active:scale-98 text-white font-extrabold py-4 px-6 rounded-full flex items-center justify-center gap-2 transition-all shadow-md text-sm sm:text-base border border-white/20"
               >
                 <Zap className="w-4 h-4 text-amber-accent" />
                 <span>Express Buy Now</span>
@@ -389,10 +389,10 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   if (comparing) removeFromCompare(product.slug);
                   else addToCompare(product);
                 }}
-                className={`w-full py-2.5 px-4 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-colors ${
+                className={`w-full py-3 px-4 rounded-full border text-xs font-bold flex items-center justify-center gap-1.5 transition-colors ${
                   comparing
                     ? 'border-brand-500 bg-brand-50 text-brand-700'
-                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                    : 'border-slate-200 text-slate-600 hover:bg-white/80'
                 }`}
               >
                 <Scale className="w-3.5 h-3.5" />
@@ -400,8 +400,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               </button>
             </div>
 
-            {/* Indian PIN Code Delivery Checker */}
-            <div className="pt-4 border-t border-slate-100">
+            {/* Indian PIN Code Delivery Checker (Curvy Glass Card) */}
+            <div className="pt-4 border-t border-slate-200/50">
               <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5 mb-2">
                 <MapPin className="w-4 h-4 text-brand-600" />
                 <span>Check Delivery Timeline & COD Availability</span>
@@ -413,12 +413,12 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   value={pincode}
                   maxLength={6}
                   onChange={(e) => setPincode(e.target.value)}
-                  className="flex-1 bg-slate-100 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="flex-1 bg-white/80 rounded-full px-4 py-2.5 text-xs text-slate-900 focus:outline-none border border-slate-200/80 focus:border-brand-500 transition-all shadow-inner"
                 />
                 <button
                   type="submit"
                   disabled={pincodeLoading || !pincode}
-                  className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors"
+                  className="bg-slate-900 hover:bg-black disabled:opacity-50 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all shadow-xs"
                 >
                   {pincodeLoading ? 'Checking...' : 'Check'}
                 </button>
@@ -426,7 +426,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
               {pincodeError && <p className="text-[11px] text-red-500 mt-2">{pincodeError}</p>}
               {pincodeResult && (
-                <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 space-y-1">
+                <div className="mt-3 p-3.5 glass-card rounded-2xl border border-emerald-200/70 text-xs text-emerald-900 space-y-1 bg-emerald-50/80 backdrop-blur-md">
                   <div className="flex items-center gap-1.5 font-bold">
                     <Check className="w-4 h-4 text-emerald-600" />
                     <span>Delivering by <strong>{pincodeResult.estimatedDeliveryDate}</strong></span>
@@ -441,7 +441,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         </div>
 
         {/* Technical Specifications & Compatibility Matrix */}
-        <div className="mt-12 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs space-y-8">
+        <div className="mt-12 glass-panel rounded-4xl p-6 sm:p-10 border border-white/80 shadow-glass space-y-8 bg-white/75 backdrop-blur-xl">
           <div>
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
               Technical Specifications & Engineering Details
@@ -530,7 +530,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
         {/* Step-by-Step FAQs */}
         {product.faq && product.faq.length > 0 && (
-          <div className="mt-12 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs space-y-6">
+          <div className="mt-12 glass-panel rounded-4xl p-6 sm:p-10 border border-white/80 shadow-glass space-y-6 bg-white/75 backdrop-blur-xl">
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
               Product Guide & Frequently Asked Questions
             </h2>
@@ -538,11 +538,11 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               {product.faq.map((item, idx) => (
                 <div
                   key={idx}
-                  className="border border-slate-200 rounded-2xl overflow-hidden transition-all"
+                  className="border border-white/80 rounded-3xl overflow-hidden transition-all bg-white/60 backdrop-blur-md shadow-xs"
                 >
                   <button
                     onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
-                    className="w-full text-left p-4 sm:p-5 flex items-center justify-between font-bold text-xs sm:text-sm text-slate-900 hover:bg-slate-50 transition-colors"
+                    className="w-full text-left p-4 sm:p-5 flex items-center justify-between font-bold text-xs sm:text-sm text-slate-900 hover:bg-white/80 transition-colors"
                   >
                     <span>{item.question}</span>
                     {activeFaq === idx ? (
@@ -552,7 +552,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     )}
                   </button>
                   {activeFaq === idx && (
-                    <div className="p-4 sm:p-5 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/40">
+                    <div className="p-4 sm:p-5 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-white/40 font-light">
                       {item.answer}
                     </div>
                   )}
@@ -563,8 +563,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         )}
 
         {/* Customer Reviews Section */}
-        <div className="mt-12 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+        <div className="mt-12 glass-panel rounded-4xl p-6 sm:p-10 border border-white/80 shadow-glass space-y-8 bg-white/75 backdrop-blur-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200/50">
             <div>
               <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
                 Customer Reviews ({reviews.length})
@@ -581,7 +581,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
             <button
               onClick={() => setShowReviewModal(true)}
-              className="bg-obsidian-950 hover:bg-black text-white text-xs font-bold px-5 py-2.5 rounded-full transition-colors self-start sm:self-auto shadow-sm"
+              className="bg-obsidian-950 hover:bg-black text-white text-xs font-bold px-6 py-3 rounded-full transition-all self-start sm:self-auto shadow-md border border-white/20 active:scale-95"
             >
               Write a Review
             </button>
@@ -592,7 +592,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             {reviews.map((rev) => (
               <div
                 key={rev._id}
-                className="p-5 rounded-2xl bg-slate-50/70 border border-slate-200/80 space-y-3"
+                className="p-6 rounded-3xl glass-card bg-white/70 border border-white/80 shadow-xs space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex text-amber-500">
@@ -607,16 +607,16 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
                 <div>
                   <h4 className="font-bold text-xs sm:text-sm text-slate-900">{rev.title}</h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">{rev.comment}</p>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed font-light">{rev.comment}</p>
                 </div>
 
-                <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] text-slate-500">
+                <div className="pt-2 border-t border-slate-200/50 flex items-center justify-between text-[11px] text-slate-500">
                   <div className="flex items-center gap-1 font-semibold text-slate-800">
                     <span>{rev.userName}</span>
                     <ShieldCheck className="w-3.5 h-3.5 text-brand-600" />
                     <span className="text-slate-400 font-normal">({rev.userCity})</span>
                   </div>
-                  <span className="text-[10px] bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-600">
+                  <span className="text-[10px] bg-white/80 px-2.5 py-0.5 rounded-full border border-slate-200 text-slate-600 shadow-2xs">
                     {rev.travelType || 'Verified Traveler'}
                   </span>
                 </div>
@@ -640,10 +640,10 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         )}
       </div>
 
-      {/* Review Submission Modal */}
+      {/* Review Submission Modal (Curvy Glass Modal) */}
       {showReviewModal && (
-        <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-4">
+        <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+          <div className="glass-panel rounded-4xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white/80 space-y-4 bg-white/95 backdrop-blur-2xl">
             <h3 className="font-extrabold text-lg text-slate-900">Review {product.title}</h3>
             {reviewSuccess ? (
               <div className="p-4 bg-emerald-50 text-emerald-800 rounded-2xl text-xs font-bold text-center">
@@ -675,7 +675,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     placeholder="e.g. Rahul Verma"
                     value={reviewerName}
                     onChange={(e) => setReviewerName(e.target.value)}
-                    className="w-full bg-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none"
+                    className="w-full bg-slate-100/80 rounded-2xl px-4 py-2 text-xs focus:outline-none"
                   />
                 </div>
 
@@ -687,7 +687,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     placeholder="e.g. Mumbai, Bengaluru"
                     value={reviewerCity}
                     onChange={(e) => setReviewerCity(e.target.value)}
-                    className="w-full bg-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none"
+                    className="w-full bg-slate-100/80 rounded-2xl px-4 py-2 text-xs focus:outline-none"
                   />
                 </div>
 
@@ -699,7 +699,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     placeholder="e.g. Flawless flight to London, highly durable!"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    className="w-full bg-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none"
+                    className="w-full bg-slate-100/80 rounded-2xl px-4 py-2 text-xs focus:outline-none"
                   />
                 </div>
 
@@ -711,7 +711,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     placeholder="Share how the accessories performed during baggage handling or transit..."
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    className="w-full bg-slate-100 rounded-xl p-3 text-xs focus:outline-none"
+                    className="w-full bg-slate-100/80 rounded-2xl p-3 text-xs focus:outline-none"
                   />
                 </div>
 
@@ -719,14 +719,14 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   <button
                     type="button"
                     onClick={() => setShowReviewModal(false)}
-                    className="w-1/2 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                    className="w-1/2 py-3 rounded-full border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={reviewSubmitting}
-                    className="w-1/2 bg-brand-600 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-brand-500 transition-colors"
+                    className="w-1/2 bg-brand-600 text-white py-3 rounded-full text-xs font-bold hover:bg-brand-500 transition-colors shadow-sm"
                   >
                     {reviewSubmitting ? 'Posting...' : 'Submit Review'}
                   </button>
@@ -739,3 +739,4 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     </div>
   );
 }
+

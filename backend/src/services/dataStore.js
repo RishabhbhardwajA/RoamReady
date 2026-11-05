@@ -93,7 +93,7 @@ const dataStore = {
       try {
         const cat = await Category.findOne({ slug }).lean();
         if (cat) return cat;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.categories.find(c => c.slug === slug) || null;
   },
@@ -184,7 +184,7 @@ const dataStore = {
       try {
         const prod = await Product.findOne({ slug }).lean();
         if (prod) return prod;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.products.find(p => p.slug === slug) || null;
   },
@@ -194,7 +194,7 @@ const dataStore = {
       try {
         const prod = await Product.findById(id).lean();
         if (prod) return prod;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.products.find(p => p._id.toString() === id.toString()) || null;
   },
@@ -204,7 +204,7 @@ const dataStore = {
       try {
         const p = await Product.create(data);
         return p.toObject();
-      } catch (e) {}
+      } catch (e) { }
     }
     const newProd = {
       ...data,
@@ -221,7 +221,7 @@ const dataStore = {
       try {
         const p = await Product.findByIdAndUpdate(id, data, { new: true }).lean();
         if (p) return p;
-      } catch (e) {}
+      } catch (e) { }
     }
     const idx = memoryStore.products.findIndex(p => p._id.toString() === id.toString());
     if (idx !== -1) {
@@ -236,7 +236,7 @@ const dataStore = {
       try {
         await Product.findByIdAndDelete(id);
         return true;
-      } catch (e) {}
+      } catch (e) { }
     }
     const initialLen = memoryStore.products.length;
     memoryStore.products = memoryStore.products.filter(p => p._id.toString() !== id.toString());
@@ -252,7 +252,7 @@ const dataStore = {
         if (includePassword) query.select('+password');
         const user = await query.exec();
         if (user) return user;
-      } catch (e) {}
+      } catch (e) { }
     }
     const user = memoryStore.users.find(u => u.email.toLowerCase() === cleanEmail);
     if (!user) return null;
@@ -268,7 +268,7 @@ const dataStore = {
       try {
         const user = await User.findById(id).select('-password').lean();
         if (user) return user;
-      } catch (e) {}
+      } catch (e) { }
     }
     const user = memoryStore.users.find(u => u._id.toString() === id.toString());
     if (!user) return null;
@@ -284,7 +284,7 @@ const dataStore = {
         const obj = user.toObject();
         delete obj.password;
         return obj;
-      } catch (e) {}
+      } catch (e) { }
     }
     const newUser = {
       _id: `usr_${Date.now()}`,
@@ -306,7 +306,7 @@ const dataStore = {
       try {
         const user = await User.findByIdAndUpdate(id, updateData, { new: true }).select('-password').lean();
         if (user) return user;
-      } catch (e) {}
+      } catch (e) { }
     }
     const idx = memoryStore.users.findIndex(u => u._id.toString() === id.toString());
     if (idx !== -1) {
@@ -322,7 +322,7 @@ const dataStore = {
       try {
         const users = await User.find().select('-password').sort({ createdAt: -1 }).lean();
         if (users && users.length > 0) return users;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.users.map(({ password, ...u }) => u);
   },
@@ -414,7 +414,7 @@ const dataStore = {
       try {
         const orderDoc = await Order.create(newOrder);
         return orderDoc.toObject();
-      } catch (e) {}
+      } catch (e) { }
     }
 
     memoryStore.orders.unshift(newOrder);
@@ -435,7 +435,7 @@ const dataStore = {
       try {
         const orders = await Order.find({ user: userId }).sort({ createdAt: -1 }).lean();
         if (orders && orders.length > 0) return orders;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.orders.filter(o => o.user && o.user.toString() === userId.toString());
   },
@@ -447,7 +447,7 @@ const dataStore = {
           $or: [{ orderNumber: idOrNumber }, { _id: idOrNumber }]
         }).lean();
         if (order) return order;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.orders.find(o => o.orderNumber === idOrNumber || o._id.toString() === idOrNumber.toString()) || null;
   },
@@ -457,7 +457,7 @@ const dataStore = {
       try {
         const orders = await Order.find().sort({ createdAt: -1 }).lean();
         if (orders && orders.length > 0) return orders;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.orders;
   },
@@ -477,7 +477,7 @@ const dataStore = {
           { new: true }
         ).lean();
         if (updated) return updated;
-      } catch (e) {}
+      } catch (e) { }
     }
 
     order.orderStatus = status;
@@ -498,7 +498,7 @@ const dataStore = {
       try {
         const reviews = await Review.find({ productSlug, status: 'approved' }).sort({ createdAt: -1 }).lean();
         if (reviews && reviews.length > 0) return reviews;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.reviews.filter(r => r.productSlug === productSlug && r.status === 'approved');
   },
@@ -508,7 +508,7 @@ const dataStore = {
       try {
         const reviews = await Review.find().sort({ createdAt: -1 }).lean();
         if (reviews && reviews.length > 0) return reviews;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.reviews;
   },
@@ -526,7 +526,7 @@ const dataStore = {
       try {
         const rev = await Review.create(newReview);
         return rev.toObject();
-      } catch (e) {}
+      } catch (e) { }
     }
 
     memoryStore.reviews.unshift(newReview);
@@ -550,7 +550,7 @@ const dataStore = {
       try {
         const cpn = await Coupon.findOne({ code: cleanCode, isActive: true }).lean();
         if (cpn) return cpn;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.coupons.find(c => c.code === cleanCode && c.isActive) || null;
   },
@@ -560,7 +560,7 @@ const dataStore = {
       try {
         const cpns = await Coupon.find().sort({ createdAt: -1 }).lean();
         if (cpns && cpns.length > 0) return cpns;
-      } catch (e) {}
+      } catch (e) { }
     }
     return memoryStore.coupons;
   },
@@ -577,7 +577,7 @@ const dataStore = {
       try {
         const c = await Coupon.create(newCoupon);
         return c.toObject();
-      } catch (e) {}
+      } catch (e) { }
     }
     memoryStore.coupons.push(newCoupon);
     return newCoupon;

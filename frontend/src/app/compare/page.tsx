@@ -76,18 +76,18 @@ export default function ComparePage() {
   );
 
   return (
-    <div className="bg-slate-50 min-h-screen py-10 sm:py-16">
+    <div className="min-h-screen py-10 sm:py-16 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-6 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-6 border-b border-slate-200/50">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-brand-600 font-bold text-xs uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center gap-1.5 text-brand-600 font-bold text-xs uppercase tracking-wider mb-1 bg-white/60 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/80">
               <Scale className="w-4 h-4" />
               <span>Specification Comparison</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">
               Compare Travel Gear Side-by-Side
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-light">
               Analyze specs, weight, dimensions, TSA certifications, and materials across our product lineup.
             </p>
           </div>
@@ -95,7 +95,7 @@ export default function ComparePage() {
           {compareProducts.length > 0 && (
             <button
               onClick={clearCompare}
-              className="mt-4 sm:mt-0 text-xs text-red-600 hover:underline font-bold"
+              className="mt-4 sm:mt-0 text-xs text-rose-600 hover:underline font-bold bg-white/60 px-4 py-1.5 rounded-full border border-slate-200/60"
             >
               Clear Comparison
             </button>
@@ -103,18 +103,18 @@ export default function ComparePage() {
         </div>
 
         {compareProducts.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-xs space-y-4">
-            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+          <div className="glass-panel rounded-4xl p-12 text-center border border-white/80 shadow-glass space-y-4 bg-white/75 backdrop-blur-xl">
+            <div className="w-16 h-16 rounded-full bg-slate-100/80 flex items-center justify-center mx-auto text-slate-400 shadow-xs">
               <Scale className="w-8 h-8" />
             </div>
             <h3 className="font-extrabold text-slate-900 text-lg">No items selected for comparison</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <p className="text-xs text-slate-500 max-w-sm mx-auto font-light">
               Select &quot;Compare&quot; on any product card or choose a travel accessory below to begin.
             </p>
             <div className="flex justify-center gap-3">
               <Link
                 href="/products"
-                className="bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold px-6 py-2.5 rounded-full transition-colors"
+                className="bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold px-7 py-3 rounded-full transition-all shadow-md active:scale-95 border border-white/20"
               >
                 Browse All Gear
               </Link>
@@ -127,14 +127,14 @@ export default function ComparePage() {
               <div className="relative inline-block">
                 <button
                   onClick={() => setShowAddDropdown(!showAddDropdown)}
-                  className="bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-xs transition-colors"
+                  className="bg-white/80 hover:bg-white border border-white/80 text-slate-800 text-xs font-bold px-5 py-2.5 rounded-full flex items-center gap-1.5 shadow-xs transition-all backdrop-blur-md"
                 >
                   <Plus className="w-3.5 h-3.5 text-brand-600" />
                   <span>Add another gear to compare ({4 - compareProducts.length} spots left)</span>
                 </button>
 
                 {showAddDropdown && (
-                  <div className="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 max-h-60 overflow-y-auto">
+                  <div className="absolute left-0 mt-2 w-72 glass-panel rounded-3xl shadow-glass-lg border border-white/80 p-2 z-50 max-h-60 overflow-y-auto backdrop-blur-2xl bg-white/95">
                     {availableToAdd.map((p) => (
                       <button
                         key={p.slug}
@@ -142,9 +142,9 @@ export default function ComparePage() {
                           addToCompare(p);
                           setShowAddDropdown(false);
                         }}
-                        className="w-full text-left p-2 hover:bg-slate-50 rounded-xl text-xs flex items-center gap-2 transition-colors"
+                        className="w-full text-left p-2.5 hover:bg-brand-50/80 rounded-2xl text-xs flex items-center gap-2 transition-colors"
                       >
-                        <img src={p.thumbnail} alt={p.title} className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+                        <img src={p.thumbnail} alt={p.title} className="w-8 h-8 rounded-xl object-cover flex-shrink-0" />
                         <span className="font-semibold text-slate-800 truncate">{p.title}</span>
                       </button>
                     ))}
@@ -153,8 +153,8 @@ export default function ComparePage() {
               </div>
             )}
 
-            {/* Comparison Table */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 shadow-md overflow-x-auto">
+            {/* Comparison Table (Curvy Glass Panel) */}
+            <div className="glass-panel rounded-4xl border border-white/80 shadow-glass overflow-x-auto bg-white/80 backdrop-blur-xl">
               <table className="w-full text-left border-collapse min-w-[700px]">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/60">
@@ -224,3 +224,4 @@ export default function ComparePage() {
     </div>
   );
 }
+

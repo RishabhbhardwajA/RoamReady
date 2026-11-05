@@ -21,22 +21,22 @@ export const Footer: React.FC = () => {
       {/* Trust Badges Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 border-b border-slate-800/80 mb-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-obsidian-900/60 border border-slate-800">
+          <div className="flex flex-col items-center gap-2 p-5 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-sm hover:border-white/20 transition-all">
             <ShieldCheck className="w-8 h-8 text-amber-accent" />
             <span className="font-bold text-white text-sm">TSA Certified Gear</span>
             <span className="text-xs text-slate-400">Accepted by airport screeners worldwide</span>
           </div>
-          <div className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-obsidian-900/60 border border-slate-800">
+          <div className="flex flex-col items-center gap-2 p-5 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-sm hover:border-white/20 transition-all">
             <Truck className="w-8 h-8 text-brand-400" />
             <span className="font-bold text-white text-sm">PAN-India Air Express</span>
             <span className="text-xs text-slate-400">Fast dispatch via BlueDart & Delhivery</span>
           </div>
-          <div className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-obsidian-900/60 border border-slate-800">
+          <div className="flex flex-col items-center gap-2 p-5 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-sm hover:border-white/20 transition-all">
             <RefreshCw className="w-8 h-8 text-emerald-400" />
             <span className="font-bold text-white text-sm">3-Year Guarantee</span>
             <span className="text-xs text-slate-400">Zero zipper bursts & lock replacement</span>
           </div>
-          <div className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-obsidian-900/60 border border-slate-800">
+          <div className="flex flex-col items-center gap-2 p-5 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-sm hover:border-white/20 transition-all">
             <Compass className="w-8 h-8 text-sky-400" />
             <span className="font-bold text-white text-sm">Travel Tested</span>
             <span className="text-xs text-slate-400">Engineered by frequent international flyers</span>
@@ -136,3 +136,4 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+

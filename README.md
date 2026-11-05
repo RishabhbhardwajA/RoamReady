@@ -223,3 +223,4 @@ node backend/tests/api.test.js
 * **Backend:** Deploy on **Render**, **Railway**, or **AWS EC2**. Set `PORT=5000`, `NODE_ENV=production`, `MONGODB_URI`, `JWT_SECRET`.
 * **Database:** **MongoDB Atlas** M0/M10 cluster.
 * **Images:** Hosted on fast CDN / Cloudinary with Unsplash image backups.
+

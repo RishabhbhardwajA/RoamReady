@@ -212,3 +212,4 @@ export interface AdminMetrics {
   lowStockProducts: Product[];
   recentOrders: Order[];
 }
+

@@ -24,18 +24,18 @@ export default function TravelKitsPage() {
   }, []);
 
   return (
-    <div className="bg-slate-50 min-h-screen py-10 sm:py-16">
+    <div className="min-h-screen py-10 sm:py-16 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-900 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-1.5 bg-amber-100/80 backdrop-blur-md border border-amber-200/60 text-amber-900 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
             <Layers className="w-3.5 h-3.5" />
             <span>Ready-to-Fly Travel Kits</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
             Curated Bundles. Maximum Savings.
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-3 max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 mt-3 max-w-xl mx-auto leading-relaxed font-light">
             Stop buying random accessories individually. Our flight-ready bundles combine TSA security locks, heavy-duty straps, privacy tags, and compression cubes at up to 30% bundle discount.
           </p>
         </div>
@@ -48,17 +48,17 @@ export default function TravelKitsPage() {
             {kits.map((kit) => (
               <div
                 key={kit._id}
-                className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-md flex flex-col justify-between group hover:shadow-xl transition-all"
+                className="glass-card rounded-4xl p-6 sm:p-8 border border-white/80 shadow-glass flex flex-col justify-between group hover:shadow-glass-hover bg-white/75 backdrop-blur-xl transition-all"
               >
                 <div>
                   <div className="flex flex-col sm:flex-row gap-6 items-start">
                     <img
                       src={kit.thumbnail}
                       alt={kit.title}
-                      className="w-full sm:w-44 h-48 sm:h-44 object-cover rounded-2xl border border-slate-200 flex-shrink-0"
+                      className="w-full sm:w-44 h-48 sm:h-44 object-cover rounded-3xl border border-white/80 flex-shrink-0 shadow-xs"
                     />
                     <div className="space-y-2">
-                      <span className="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      <span className="bg-amber-100/90 text-amber-800 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider border border-amber-200/60">
                         {kit.badge || 'Bundle Deal'}
                       </span>
                       <h3 className="font-extrabold text-lg sm:text-xl text-slate-900 group-hover:text-brand-600 transition-colors">
@@ -71,14 +71,14 @@ export default function TravelKitsPage() {
                         <span className="text-xs text-slate-400 line-through">
                           {formatINR(kit.originalPrice)}
                         </span>
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/50">
                           Save {formatINR(kit.originalPrice - kit.price)}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-600 mt-4 leading-relaxed">
+                  <p className="text-xs text-slate-600 mt-4 leading-relaxed font-light">
                     {kit.description}
                   </p>
 
@@ -108,17 +108,17 @@ export default function TravelKitsPage() {
                   </div>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+                <div className="mt-8 pt-4 border-t border-slate-200/50 flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => addItem(kit, kit.variants[0], 1)}
-                    className="w-full sm:flex-1 bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-98"
+                    className="w-full sm:flex-1 bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-4 px-6 rounded-full flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-98 border border-white/20"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     <span>Add Travel Kit to Bag</span>
                   </button>
                   <Link
                     href={`/products/${kit.slug}`}
-                    className="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold py-3.5 px-5 rounded-xl text-center flex items-center justify-center gap-1 transition-colors"
+                    className="w-full sm:w-auto bg-white/80 hover:bg-white text-slate-800 text-xs font-bold py-4 px-6 rounded-full text-center flex items-center justify-center gap-1 transition-all border border-slate-200/80 shadow-xs"
                   >
                     <span>Full Specs</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -132,3 +132,4 @@ export default function TravelKitsPage() {
     </div>
   );
 }
+

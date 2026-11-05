@@ -35,7 +35,7 @@ const testimonials = [
 
 export const Testimonials: React.FC = () => {
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-16 md:py-24 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-brand-600 font-extrabold text-xs uppercase tracking-widest">
@@ -44,7 +44,7 @@ export const Testimonials: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">
             Trusted by Flyers Across 40+ Countries
           </h2>
-          <p className="text-sm text-slate-500 mt-2">
+          <p className="text-sm text-slate-500 mt-2 font-light">
             Real feedback from domestic commuters, international vacationers, and corporate consultants.
           </p>
         </div>
@@ -53,7 +53,7 @@ export const Testimonials: React.FC = () => {
           {testimonials.map((t, idx) => (
             <div
               key={idx}
-              className="bg-slate-50 border border-slate-200/80 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:shadow-lg transition-all"
+              className="glass-card rounded-4xl p-7 sm:p-8 flex flex-col justify-between border border-white/80 shadow-glass hover:shadow-glass-hover bg-white/75 backdrop-blur-xl"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -62,18 +62,20 @@ export const Testimonials: React.FC = () => {
                       <Star key={i} className="w-4 h-4 fill-amber-500 text-amber-500" />
                     ))}
                   </div>
-                  <Quote className="w-6 h-6 text-slate-300" />
+                  <div className="w-8 h-8 rounded-full bg-slate-100/80 flex items-center justify-center">
+                    <Quote className="w-4 h-4 text-slate-400" />
+                  </div>
                 </div>
 
                 <div>
                   <h4 className="font-bold text-slate-900 text-sm">{t.title}</h4>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-2 italic">
+                  <p className="text-xs text-slate-600 leading-relaxed mt-2 italic font-light">
                     &ldquo;{t.quote}&rdquo;
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t border-slate-200/50 flex items-center justify-between">
                 <div>
                   <div className="font-bold text-slate-900 text-xs flex items-center gap-1">
                     <span>{t.name}</span>
@@ -83,7 +85,7 @@ export const Testimonials: React.FC = () => {
                     {t.role} &bull; {t.city}
                   </div>
                 </div>
-                <span className="text-[10px] text-brand-700 bg-brand-50 font-bold px-2 py-0.5 rounded-md text-right max-w-[120px] truncate">
+                <span className="text-[10px] text-brand-700 bg-white/80 backdrop-blur-md border border-brand-200/60 font-bold px-3 py-1 rounded-full text-right max-w-[130px] truncate shadow-xs">
                   {t.productName}
                 </span>
               </div>
@@ -94,3 +96,4 @@ export const Testimonials: React.FC = () => {
     </section>
   );
 };
+

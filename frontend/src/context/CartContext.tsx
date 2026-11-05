@@ -46,7 +46,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedCart) {
       try {
         setCart(JSON.parse(savedCart));
-      } catch (e) {}
+      } catch (e) { }
     }
 
     fetchCart();
@@ -178,7 +178,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const clearCart = async () => {
     try {
       await apiClient.delete('/cart');
-    } catch (e) {}
+    } catch (e) { }
     saveLocalCart(defaultCart);
   };
 

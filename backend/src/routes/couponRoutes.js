@@ -6,3 +6,4 @@ router.get('/', couponController.getActiveCoupons);
 router.post('/validate', couponController.validateCoupon);
 
 module.exports = router;
+

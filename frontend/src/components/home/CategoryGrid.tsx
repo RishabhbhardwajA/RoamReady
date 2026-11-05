@@ -20,7 +20,7 @@ const iconMap: Record<string, any> = {
 
 export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
   return (
-    <section className="py-16 md:py-24 bg-slate-50">
+    <section className="py-16 md:py-24 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
@@ -33,7 +33,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
           </div>
           <Link
             href="/products"
-            className="mt-4 md:mt-0 text-sm font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 group"
+            className="mt-4 md:mt-0 text-sm font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 group bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/80 shadow-xs"
           >
             <span>View All Categories</span>
             <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -47,25 +47,25 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
               <Link
                 key={cat.slug}
                 href={cat.slug === 'travel-kits' ? '/kits' : `/products?category=${cat.slug}`}
-                className="group relative bg-white border border-slate-200/80 rounded-3xl p-6 overflow-hidden shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 flex flex-col justify-between h-72"
+                className="group relative glass-card rounded-4xl p-7 overflow-hidden border border-white/80 shadow-glass hover:shadow-glass-hover transition-all duration-500 flex flex-col justify-between h-72 bg-white/70 backdrop-blur-xl"
               >
                 {/* Background image preview with smooth gradient overlay */}
                 <div className="absolute inset-0 z-0">
                   <img
                     src={cat.image}
                     alt={cat.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-20 group-hover:opacity-30"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-25 group-hover:opacity-35"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
                 </div>
 
                 {/* Top Badge & Icon */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-brand-600 group-hover:text-white text-slate-800 flex items-center justify-center transition-colors shadow-xs">
+                  <div className="w-13 h-13 rounded-2xl bg-white/80 backdrop-blur-md border border-white/80 group-hover:bg-brand-600 group-hover:text-white group-hover:border-brand-500 text-slate-800 flex items-center justify-center transition-all shadow-sm">
                     <Icon className="w-6 h-6" />
                   </div>
                   {cat.badge && (
-                    <span className="bg-obsidian-900 text-amber-accent text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
+                    <span className="bg-obsidian-950/85 backdrop-blur-md border border-white/20 text-amber-accent text-[10px] font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                       {cat.badge}
                     </span>
                   )}
@@ -77,7 +77,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
                     <span>{cat.name}</span>
                     <ArrowUpRight className="w-5 h-5 text-slate-400 group-hover:text-brand-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                  <p className="text-xs text-slate-500 mt-1 line-clamp-2 font-light">
                     {cat.shortDescription || cat.description}
                   </p>
                 </div>
@@ -89,3 +89,4 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
     </section>
   );
 };
+

@@ -124,11 +124,11 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen py-10 sm:py-16">
+    <div className="min-h-screen py-10 sm:py-16 relative">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Progress Header */}
         <div className="text-center max-w-xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 bg-slate-200/80 text-slate-700 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-1.5 bg-white/80 backdrop-blur-md border border-white/80 text-slate-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
             <Lock className="w-3.5 h-3.5 text-brand-600" />
             <span>256-Bit SSL Encrypted Checkout</span>
           </div>
@@ -140,12 +140,12 @@ export default function CheckoutPage() {
           {step !== 3 && (
             <div className="flex items-center justify-center gap-4 mt-6 text-xs">
               <div className={`flex items-center gap-1.5 ${step === 1 ? 'text-brand-600 font-extrabold' : 'text-emerald-600 font-semibold'}`}>
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step === 1 ? 'bg-brand-600 text-white' : 'bg-emerald-600 text-white'}`}>1</span>
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs ${step === 1 ? 'bg-brand-600 text-white' : 'bg-emerald-600 text-white'}`}>1</span>
                 <span>Shipping Address</span>
               </div>
               <span className="text-slate-300">———</span>
               <div className={`flex items-center gap-1.5 ${step === 2 ? 'text-brand-600 font-extrabold' : 'text-slate-400'}`}>
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step === 2 ? 'bg-brand-600 text-white' : 'bg-slate-200 text-slate-600'}`}>2</span>
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs ${step === 2 ? 'bg-brand-600 text-white' : 'bg-white/80 text-slate-600 border border-slate-200'}`}>2</span>
                 <span>Payment & Review</span>
               </div>
             </div>
@@ -153,8 +153,8 @@ export default function CheckoutPage() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-2 text-xs text-red-700 max-w-2xl mx-auto">
-            <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+          <div className="mb-6 p-4 bg-rose-50/90 border border-rose-200 rounded-3xl flex items-center gap-2 text-xs text-rose-700 max-w-2xl mx-auto backdrop-blur-md">
+            <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -162,7 +162,7 @@ export default function CheckoutPage() {
         {/* STEP 1: Shipping Address Form */}
         {step === 1 && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto">
-            <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
+            <div className="lg:col-span-7 glass-panel p-6 sm:p-8 rounded-4xl border border-white/80 shadow-glass space-y-6 bg-white/75 backdrop-blur-xl">
               <h2 className="text-base sm:text-lg font-extrabold text-slate-900 pb-3 border-b border-slate-100">
                 1. Customer & Delivery Address
               </h2>
@@ -262,7 +262,7 @@ export default function CheckoutPage() {
                 <div className="pt-4">
                   <button
                     type="submit"
-                    className="w-full bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm transition-colors shadow-sm"
+                    className="w-full bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-4 px-6 rounded-full flex items-center justify-center gap-2 text-xs sm:text-sm transition-all shadow-md active:scale-98 border border-white/20"
                   >
                     <span>Continue to Payment Selection</span>
                     <ArrowRight className="w-4 h-4" />
@@ -271,15 +271,15 @@ export default function CheckoutPage() {
               </form>
             </div>
 
-            {/* Sidebar Summary */}
-            <div className="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4 self-start">
-              <h3 className="font-bold text-sm text-slate-900 pb-2 border-b border-slate-100">
+            {/* Sidebar Summary (Curvy Glass Panel) */}
+            <div className="lg:col-span-5 glass-panel p-6 sm:p-7 rounded-4xl border border-white/80 shadow-glass space-y-4 self-start bg-white/75 backdrop-blur-xl">
+              <h3 className="font-bold text-sm text-slate-900 pb-2 border-b border-slate-200/50">
                 Order Review ({cart.items.length} items)
               </h3>
               <div className="space-y-3 max-h-60 overflow-y-auto">
                 {cart.items.map((item) => (
                   <div key={`${item.slug}-${item.variantId}`} className="flex gap-3 text-xs">
-                    <img src={item.image} alt={item.title} className="w-12 h-12 object-cover rounded-lg border border-slate-100 flex-shrink-0" />
+                    <img src={item.image} alt={item.title} className="w-12 h-12 object-cover rounded-xl border border-white/80 flex-shrink-0 shadow-2xs" />
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-slate-900 truncate">{item.title}</div>
                       <div className="text-[11px] text-slate-400">Qty: {item.quantity} &bull; {item.colorName}</div>
@@ -289,7 +289,7 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="border-t border-slate-100 pt-3 space-y-1.5 text-xs text-slate-600">
+              <div className="border-t border-slate-200/50 pt-3 space-y-1.5 text-xs text-slate-600">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span className="font-semibold text-slate-900">{formatINR(cart.subtotal)}</span>
@@ -304,7 +304,7 @@ export default function CheckoutPage() {
                   <span>Air Express Shipping</span>
                   <span>{cart.shipping === 0 ? <strong className="text-emerald-600">FREE</strong> : formatINR(cart.shipping)}</span>
                 </div>
-                <div className="border-t border-slate-100 pt-2 flex justify-between text-base font-extrabold text-slate-900">
+                <div className="border-t border-slate-200/50 pt-2 flex justify-between text-base font-extrabold text-slate-900">
                   <span>Total Payable</span>
                   <span className="text-brand-600">{formatINR(cart.total)}</span>
                 </div>
@@ -316,8 +316,8 @@ export default function CheckoutPage() {
         {/* STEP 2: Payment Selection */}
         {step === 2 && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto">
-            <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="lg:col-span-7 glass-panel p-6 sm:p-8 rounded-4xl border border-white/80 shadow-glass space-y-6 bg-white/75 backdrop-blur-xl">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200/50">
                 <h2 className="text-base sm:text-lg font-extrabold text-slate-900">
                   2. Choose Payment Method
                 </h2>
@@ -330,7 +330,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Explicit Demo Mode Indicator */}
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-2.5 text-xs text-amber-900">
+              <div className="p-3.5 bg-amber-50/90 border border-amber-200/80 rounded-2xl flex items-center gap-2.5 text-xs text-amber-900 backdrop-blur-md">
                 <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
                 <span>
                   <strong>Demo Mode Enabled:</strong> Test payments are simulated safely without deducting real bank funds.
@@ -340,7 +340,7 @@ export default function CheckoutPage() {
               {/* Payment Methods Tabs */}
               <div className="space-y-3">
                 {/* UPI Option */}
-                <label className={`block p-4 rounded-2xl border cursor-pointer transition-all ${paymentMethod === 'upi' ? 'border-brand-600 bg-brand-50/50 ring-2 ring-brand-500' : 'border-slate-200 hover:border-slate-300'}`}>
+                <label className={`block p-4 rounded-3xl border cursor-pointer transition-all ${paymentMethod === 'upi' ? 'border-brand-600 bg-brand-50/70 ring-2 ring-brand-500' : 'border-slate-200 bg-white/60 hover:bg-white'}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <input
@@ -455,7 +455,7 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="w-1/3 py-3.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50"
+                  className="w-1/3 py-4 rounded-full border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
                 >
                   Back
                 </button>
@@ -463,7 +463,7 @@ export default function CheckoutPage() {
                   type="button"
                   onClick={handlePlaceOrder}
                   disabled={loading}
-                  className="w-2/3 bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition-all active:scale-98"
+                  className="w-2/3 bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-4 px-6 rounded-full flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition-all active:scale-98 border border-white/20"
                 >
                   {loading ? (
                     <span>Securing Order...</span>
@@ -478,8 +478,8 @@ export default function CheckoutPage() {
             </div>
 
             {/* Sidebar Summary */}
-            <div className="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4 self-start">
-              <h3 className="font-bold text-sm text-slate-900 pb-2 border-b border-slate-100">
+            <div className="lg:col-span-5 glass-panel p-6 sm:p-7 rounded-4xl border border-white/80 shadow-glass space-y-4 self-start bg-white/75 backdrop-blur-xl">
+              <h3 className="font-bold text-sm text-slate-900 pb-2 border-b border-slate-200/50">
                 Shipping Details
               </h3>
               <div className="text-xs text-slate-600 space-y-1">
@@ -489,7 +489,7 @@ export default function CheckoutPage() {
                 <div className="text-emerald-700 font-semibold pt-1">Carrier: BlueDart Air Express</div>
               </div>
 
-              <div className="border-t border-slate-100 pt-3 space-y-1.5 text-xs text-slate-600">
+              <div className="border-t border-slate-200/50 pt-3 space-y-1.5 text-xs text-slate-600">
                 <div className="flex justify-between">
                   <span>Bag Subtotal</span>
                   <span className="font-semibold text-slate-900">{formatINR(cart.subtotal)}</span>
@@ -504,7 +504,7 @@ export default function CheckoutPage() {
                   <span>Shipping</span>
                   <span>{cart.shipping === 0 ? <strong className="text-emerald-600">FREE</strong> : formatINR(cart.shipping)}</span>
                 </div>
-                <div className="border-t border-slate-100 pt-2 flex justify-between text-base font-extrabold text-slate-900">
+                <div className="border-t border-slate-200/50 pt-2 flex justify-between text-base font-extrabold text-slate-900">
                   <span>Final Payable</span>
                   <span className="text-brand-600">{formatINR(cart.total)}</span>
                 </div>
@@ -515,8 +515,8 @@ export default function CheckoutPage() {
 
         {/* STEP 3: Order Confirmation */}
         {step === 3 && confirmedOrder && (
-          <div className="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl text-center space-y-6 animate-in zoom-in-95 duration-400">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+          <div className="max-w-2xl mx-auto glass-panel rounded-4xl p-6 sm:p-10 border border-white/80 shadow-glass text-center space-y-6 animate-in zoom-in-95 duration-400 bg-white/85 backdrop-blur-2xl">
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
               <CheckCircle2 className="w-10 h-10" />
             </div>
 
@@ -527,13 +527,13 @@ export default function CheckoutPage() {
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">
                 Thank You for Choosing RoamReady!
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-xs sm:text-sm text-slate-500 mt-1 font-light">
                 Your travel gear is being prepared at our Bengaluru Hub. Confirmation has been dispatched to <strong>{confirmedOrder.customerDetails.email}</strong>.
               </p>
             </div>
 
             {/* Reference Box */}
-            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-3 text-xs">
+            <div className="p-5 glass-card rounded-3xl border border-white/80 text-left space-y-3 text-xs bg-white/70 backdrop-blur-md">
               <div className="flex justify-between">
                 <span className="text-slate-400">Order Reference:</span>
                 <span className="font-mono font-bold text-slate-900">{confirmedOrder.orderNumber}</span>
@@ -557,13 +557,13 @@ export default function CheckoutPage() {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link
                 href="/account/orders"
-                className="w-full sm:w-1/2 bg-obsidian-950 hover:bg-black text-white text-xs font-bold py-3.5 rounded-xl transition-colors"
+                className="w-full sm:w-1/2 bg-obsidian-950 hover:bg-black text-white text-xs font-bold py-4 rounded-full transition-all shadow-md"
               >
                 Track Live Order Timeline
               </Link>
               <Link
                 href="/products"
-                className="w-full sm:w-1/2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold py-3.5 rounded-xl transition-colors"
+                className="w-full sm:w-1/2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold py-4 rounded-full transition-all shadow-md"
               >
                 Continue Shopping
               </Link>
@@ -574,3 +574,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

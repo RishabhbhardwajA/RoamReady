@@ -46,19 +46,19 @@ export default function CartPage() {
 
   if (cart.items.length === 0) {
     return (
-      <div className="bg-slate-50 min-h-screen py-16 flex items-center justify-center">
-        <div className="max-w-md w-full mx-auto p-8 bg-white rounded-3xl border border-slate-200/80 shadow-sm text-center space-y-4">
-          <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+      <div className="min-h-screen py-16 flex items-center justify-center relative">
+        <div className="max-w-md w-full mx-auto p-8 glass-panel rounded-4xl border border-white/80 shadow-glass text-center space-y-4 bg-white/75 backdrop-blur-xl">
+          <div className="w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center mx-auto text-brand-600 shadow-xs">
             <ShoppingBag className="w-8 h-8" />
           </div>
           <h2 className="text-xl font-extrabold text-slate-900">Your Travel Bag is Empty</h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 font-light">
             Looks like you haven&apos;t added any luggage locks, compression cubes, or travel essentials yet.
           </p>
           <div className="pt-2">
             <Link
               href="/products"
-              className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs px-6 py-3 rounded-full transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs px-7 py-3.5 rounded-full transition-all shadow-md active:scale-95 border border-white/20"
             >
               <span>Explore Travel Essentials</span>
               <ArrowRight className="w-4 h-4" />
@@ -70,9 +70,9 @@ export default function CartPage() {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen py-10 sm:py-16">
+    <div className="min-h-screen py-10 sm:py-16 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 mb-8 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200/50 mb-8 gap-4">
           <div>
             <span className="text-xs font-bold text-brand-600 uppercase tracking-widest">
               Review Selected Items
@@ -83,14 +83,14 @@ export default function CartPage() {
           </div>
           <button
             onClick={clearCart}
-            className="text-xs text-slate-400 hover:text-red-600 transition-colors self-start sm:self-auto"
+            className="text-xs text-slate-400 hover:text-rose-600 transition-colors self-start sm:self-auto bg-white/60 px-3 py-1 rounded-full border border-slate-200/60"
           >
             Clear All Items
           </button>
         </div>
 
-        {/* Free Shipping Alert */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs mb-8 text-xs">
+        {/* Free Shipping Alert (Curvy Glass Panel) */}
+        <div className="glass-panel p-4 sm:p-5 rounded-3xl border border-white/80 shadow-glass mb-8 text-xs bg-white/75 backdrop-blur-xl">
           {remainingForFree > 0 ? (
             <div className="space-y-1.5">
               <div className="flex justify-between font-medium text-slate-700">
@@ -118,7 +118,7 @@ export default function CartPage() {
             {cart.items.map((item) => (
               <div
                 key={`${item.slug}-${item.variantId}`}
-                className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-5 items-center justify-between"
+                className="glass-card p-5 sm:p-6 rounded-4xl border border-white/80 shadow-glass flex flex-col sm:flex-row gap-5 items-center justify-between bg-white/75 backdrop-blur-xl"
               >
                 <div className="flex gap-4 items-center w-full sm:w-auto">
                   <img
@@ -184,10 +184,10 @@ export default function CartPage() {
             ))}
           </div>
 
-          {/* Order Summary & Coupon Card */}
+          {/* Order Summary & Coupon Card (Curvy Glass Panel) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
-              <h3 className="font-extrabold text-base text-slate-900 pb-3 border-b border-slate-100">
+            <div className="glass-panel p-6 sm:p-8 rounded-4xl border border-white/80 shadow-glass space-y-6 bg-white/75 backdrop-blur-xl">
+              <h3 className="font-extrabold text-base text-slate-900 pb-3 border-b border-slate-200/50">
                 Order Summary
               </h3>
 
@@ -197,7 +197,7 @@ export default function CartPage() {
                   Discount Code
                 </label>
                 {cart.appliedCoupon ? (
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-800">
+                  <div className="p-3 bg-emerald-50/90 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-800 backdrop-blur-md">
                     <div className="flex items-center gap-1.5 font-bold">
                       <Check className="w-4 h-4 text-emerald-600" />
                       <span>{cart.appliedCoupon.code}</span>
@@ -217,12 +217,12 @@ export default function CartPage() {
                         placeholder="e.g. WELCOME10"
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        className="flex-1 bg-slate-100 border-none rounded-xl px-3 py-2 text-xs uppercase font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="flex-1 bg-white/80 border border-slate-200/80 rounded-full px-4 py-2 text-xs uppercase font-mono text-slate-900 focus:outline-none focus:border-brand-500 shadow-inner"
                       />
                       <button
                         onClick={() => handleApplyCoupon()}
                         disabled={couponLoading || !couponCode}
-                        className="bg-obsidian-950 hover:bg-black text-white text-xs font-bold px-4 py-2 rounded-xl disabled:opacity-50 transition-colors"
+                        className="bg-obsidian-950 hover:bg-black text-white text-xs font-bold px-5 py-2 rounded-full disabled:opacity-50 transition-all shadow-xs"
                       >
                         {couponLoading ? 'Checking...' : 'Apply'}
                       </button>
@@ -237,7 +237,7 @@ export default function CartPage() {
               </div>
 
               {/* Price Calculation */}
-              <div className="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-4">
+              <div className="space-y-2 text-xs text-slate-600 border-t border-slate-200/50 pt-4 font-light">
                 <div className="flex justify-between">
                   <span>Bag Subtotal</span>
                   <span className="font-semibold text-slate-900">{formatINR(cart.subtotal)}</span>
@@ -258,7 +258,7 @@ export default function CartPage() {
                   <span>Estimated GST (18% included)</span>
                   <span className="font-semibold text-slate-500">₹{Math.round(cart.total * 0.18 / 1.18)}</span>
                 </div>
-                <div className="border-t border-slate-100 pt-3 flex justify-between text-base font-extrabold text-slate-900">
+                <div className="border-t border-slate-200/50 pt-3 flex justify-between text-base font-extrabold text-slate-900">
                   <span>Total Amount</span>
                   <span className="text-brand-600">{formatINR(cart.total)}</span>
                 </div>
@@ -267,7 +267,7 @@ export default function CartPage() {
               {/* Checkout CTA */}
               <button
                 onClick={() => router.push('/checkout')}
-                className="w-full bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-4 px-4 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-98"
+                className="w-full bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-4 px-6 rounded-full flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-98 border border-white/20"
               >
                 <span>Proceed to Secure Checkout</span>
                 <ArrowRight className="w-4 h-4" />
@@ -284,3 +284,4 @@ export default function CartPage() {
     </div>
   );
 }
+

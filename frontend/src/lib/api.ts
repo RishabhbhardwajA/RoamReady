@@ -32,3 +32,4 @@ export const formatINR = (amount: number): string => {
     maximumFractionDigits: 0
   }).format(amount);
 };
+

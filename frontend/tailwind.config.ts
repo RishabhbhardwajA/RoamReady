@@ -8,6 +8,18 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      borderRadius: {
+        '2xl': '1.25rem',
+        '3xl': '1.75rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+      },
+      boxShadow: {
+        'glass': '0 8px 32px 0 rgba(15, 23, 42, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8)',
+        'glass-lg': '0 16px 48px -8px rgba(15, 23, 42, 0.1), inset 0 1px 2px 0 rgba(255, 255, 255, 0.9)',
+        'glass-glow': '0 0 35px -5px rgba(14, 135, 235, 0.25)',
+        'glass-hover': '0 20px 40px -10px rgba(14, 135, 235, 0.18), inset 0 1px 2px 0 rgba(255, 255, 255, 1)',
+      },
       colors: {
         brand: {
           50: '#f0f7ff',
@@ -33,13 +45,17 @@ const config: Config = {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.45) 100%)',
+        'glass-dark-gradient': 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%)',
+        'glass-blue-gradient': 'linear-gradient(135deg, rgba(224, 239, 254, 0.6) 0%, rgba(240, 247, 255, 0.3) 100%)',
       }
     },
   },
   plugins: [],
 };
 export default config;
+

@@ -22,3 +22,4 @@ router.post('/coupons', adminController.createCoupon);
 router.get('/reviews', adminController.getAdminReviews);
 
 module.exports = router;
+

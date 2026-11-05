@@ -8,3 +8,4 @@ router.get('/product/:productSlug', reviewController.getProductReviews);
 router.post('/', optionalAuth, validate(addReviewSchema), reviewController.addReview);
 
 module.exports = router;
+

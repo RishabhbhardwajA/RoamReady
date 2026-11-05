@@ -11,8 +11,8 @@ export const FloatingCompareBar: React.FC = () => {
   if (compareProducts.length === 0) return null;
 
   return (
-    <aside aria-label="Product Comparison Bar" className="fixed bottom-6 inset-x-4 sm:inset-x-auto sm:right-6 z-40 max-w-lg bg-obsidian-950/95 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 animate-in slide-in-from-bottom duration-300">
-      <div className="flex items-center gap-2 pl-2">
+    <aside aria-label="Product Comparison Bar" className="fixed bottom-6 inset-x-4 sm:inset-x-auto sm:right-6 z-40 max-w-lg glass-dark rounded-full px-5 py-3 shadow-2xl border border-white/20 flex items-center gap-3 backdrop-blur-2xl animate-in slide-in-from-bottom duration-300">
+      <div className="flex items-center gap-2 pl-1">
         <Scale className="w-4 h-4 text-amber-accent flex-shrink-0" />
         <span className="text-xs font-bold whitespace-nowrap">
           Compare ({compareProducts.length}/4)
@@ -25,7 +25,7 @@ export const FloatingCompareBar: React.FC = () => {
             <img
               src={p.thumbnail}
               alt={p.title}
-              className="w-9 h-9 object-cover rounded-lg border border-slate-700"
+              className="w-9 h-9 object-cover rounded-xl border border-white/20"
             />
             <button
               onClick={() => removeFromCompare(p.slug)}
@@ -46,7 +46,7 @@ export const FloatingCompareBar: React.FC = () => {
         </button>
         <Link
           href="/compare"
-          className="bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-sm whitespace-nowrap"
+          className="bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-1 shadow-sm whitespace-nowrap transition-all"
         >
           <span>Compare</span>
           <ArrowRight className="w-3 h-3" />
@@ -55,3 +55,4 @@ export const FloatingCompareBar: React.FC = () => {
     </aside>
   );
 };
+

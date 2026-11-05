@@ -33,7 +33,7 @@ const guides = [
 
 export const TravelGuides: React.FC = () => {
   return (
-    <section className="py-16 md:py-24 bg-slate-50 border-t border-slate-200">
+    <section className="py-16 md:py-24 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
@@ -47,7 +47,7 @@ export const TravelGuides: React.FC = () => {
           </div>
           <Link
             href="/products"
-            className="mt-4 md:mt-0 text-sm font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 group"
+            className="mt-4 md:mt-0 text-sm font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 group bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/80 shadow-xs"
           >
             <span>Explore All Gear Guides</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -58,21 +58,21 @@ export const TravelGuides: React.FC = () => {
           {guides.map((g, idx) => (
             <article
               key={idx}
-              className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden hover:shadow-lg transition-all flex flex-col justify-between"
+              className="glass-card rounded-4xl overflow-hidden border border-white/80 shadow-glass hover:shadow-glass-hover bg-white/75 backdrop-blur-xl flex flex-col justify-between"
             >
               <div>
-                <div className="relative aspect-video overflow-hidden">
+                <div className="relative aspect-video overflow-hidden rounded-3xl m-3">
                   <img
                     src={g.image}
                     alt={g.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 rounded-3xl"
                   />
-                  <div className="absolute top-3 left-3 bg-obsidian-900 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                  <div className="absolute top-3 left-3 bg-obsidian-950/85 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                     {g.category}
                   </div>
                 </div>
 
-                <div className="p-6">
+                <div className="p-5 sm:p-6 pt-2">
                   <div className="flex items-center gap-2 text-[11px] text-slate-400 mb-2">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{g.readTime}</span>
@@ -80,7 +80,7 @@ export const TravelGuides: React.FC = () => {
                   <h3 className="font-bold text-base text-slate-900 hover:text-brand-600 transition-colors line-clamp-2">
                     {g.title}
                   </h3>
-                  <p className="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed">
+                  <p className="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed font-light">
                     {g.snippet}
                   </p>
                 </div>
@@ -102,3 +102,4 @@ export const TravelGuides: React.FC = () => {
     </section>
   );
 };
+

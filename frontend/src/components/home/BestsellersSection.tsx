@@ -99,3 +99,4 @@ export const BestsellersSection: React.FC<BestsellersSectionProps> = ({ products
     </section>
   );
 };
+

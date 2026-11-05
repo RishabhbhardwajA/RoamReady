@@ -98,7 +98,7 @@ function ProductsContent() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen py-8 sm:py-12">
+    <div className="min-h-screen py-8 sm:py-12 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Title & Breadcrumb */}
         <div className="mb-8">
@@ -108,13 +108,13 @@ function ProductsContent() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">
             Travel Essentials & Luggage Accessories
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-light">
             Airport security-compliant TSA locks, double-zipper compression packing cubes, privacy luggage tags, heavy-duty baggage belts, and packable duffels.
           </p>
         </div>
 
-        {/* Action Header: Search & Mobile Filter Toggle & Sort */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Action Header: Search & Mobile Filter Toggle & Sort (Curvy Glass Panel) */}
+        <div className="glass-panel p-4 sm:p-5 rounded-3xl border border-white/80 shadow-glass mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/75 backdrop-blur-xl">
           <div className="flex items-center gap-3 flex-1 max-w-md">
             <div className="relative flex-1">
               <input
@@ -122,14 +122,14 @@ function ProductsContent() {
                 placeholder="Search products or tags..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-100 rounded-xl pl-9 pr-4 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full bg-white/70 hover:bg-white focus:bg-white rounded-full pl-9 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none border border-slate-200/80 focus:border-brand-500 transition-all shadow-inner"
               />
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="text-xs text-slate-400 hover:text-slate-600"
+                className="text-xs text-slate-400 hover:text-slate-600 px-2 py-1"
               >
                 Clear
               </button>
@@ -139,7 +139,7 @@ function ProductsContent() {
           <div className="flex items-center justify-between md:justify-end gap-3">
             <button
               onClick={() => setMobileFilterOpen(true)}
-              className="lg:hidden flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold"
+              className="lg:hidden flex items-center gap-2 bg-white/80 border border-slate-200 text-slate-700 px-4 py-2 rounded-full text-xs font-bold shadow-xs"
             >
               <Filter className="w-3.5 h-3.5" />
               <span>Filters</span>
@@ -151,7 +151,7 @@ function ProductsContent() {
                 <select
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value)}
-                  className="bg-slate-100 border-none rounded-xl px-3 py-2 pr-8 text-xs font-bold text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer"
+                  className="bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-full px-4 py-2 pr-8 text-xs font-bold text-slate-800 appearance-none focus:outline-none focus:border-brand-500 cursor-pointer shadow-xs"
                 >
                   <option value="popularity">Popularity & Rating</option>
                   <option value="price-low">Price: Low to High</option>
@@ -159,7 +159,7 @@ function ProductsContent() {
                   <option value="rating">Customer Rating (Highest)</option>
                   <option value="newest">Newest Arrivals</option>
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
           </div>
@@ -167,10 +167,10 @@ function ProductsContent() {
 
         {/* Main Grid: Sidebar Filters + Products */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Desktop Filter Sidebar */}
+          {/* Desktop Filter Sidebar (Curvy Glass Panel) */}
           <aside className="hidden lg:block space-y-6">
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-6 sticky top-24">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="glass-panel p-6 rounded-4xl border border-white/80 shadow-glass space-y-6 sticky top-24 bg-white/75 backdrop-blur-xl">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200/50">
                 <div className="flex items-center gap-2 font-extrabold text-sm text-slate-900">
                   <SlidersHorizontal className="w-4 h-4 text-brand-600" />
                   <span>Filters</span>
@@ -191,10 +191,10 @@ function ProductsContent() {
                 <div className="space-y-1.5">
                   <button
                     onClick={() => setSelectedCategory('all')}
-                    className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                    className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-colors ${
                       selectedCategory === 'all'
-                        ? 'bg-brand-50 text-brand-700 font-bold'
-                        : 'text-slate-600 hover:bg-slate-50'
+                        ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/50'
+                        : 'text-slate-600 hover:bg-white/60'
                     }`}
                   >
                     All Travel Categories ({categories.length})
@@ -203,10 +203,10 @@ function ProductsContent() {
                     <button
                       key={c.slug}
                       onClick={() => setSelectedCategory(c.slug)}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors flex items-center justify-between ${
+                      className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-colors flex items-center justify-between ${
                         selectedCategory === c.slug
-                          ? 'bg-brand-50 text-brand-700 font-bold'
-                          : 'text-slate-600 hover:bg-slate-50'
+                          ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/50'
+                          : 'text-slate-600 hover:bg-white/60'
                       }`}
                     >
                       <span className="truncate">{c.name}</span>
@@ -216,7 +216,7 @@ function ProductsContent() {
               </div>
 
               {/* Price Range Filter */}
-              <div className="pt-4 border-t border-slate-100">
+              <div className="pt-4 border-t border-slate-200/50">
                 <h4 className="font-bold text-xs text-slate-900 uppercase tracking-wider mb-3">
                   Price Range (INR)
                 </h4>
@@ -383,3 +383,4 @@ export default function ProductsPage() {
     </Suspense>
   );
 }
+

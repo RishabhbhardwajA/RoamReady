@@ -52,34 +52,34 @@ export default function FinderPage() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen py-10 sm:py-16">
+    <div className="min-h-screen py-10 sm:py-16 relative">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-1.5 bg-brand-100 text-brand-800 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-1.5 bg-brand-100/80 backdrop-blur-md border border-brand-200/60 text-brand-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Interactive Pack Finder</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">
             Find Your Ideal Travel Gear Setup
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-2">
+          <p className="text-xs sm:text-sm text-slate-500 mt-2 font-light">
             Answer 3 quick questions about your upcoming trip to get an airport-ready accessory recommendation.
           </p>
         </div>
 
-        {/* Quiz Container Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-md">
+        {/* Quiz Container Card (Curvy Glass Panel) */}
+        <div className="glass-panel rounded-4xl p-6 sm:p-10 border border-white/80 shadow-glass bg-white/80 backdrop-blur-xl">
           {/* Progress Indicators */}
           {step <= 3 && (
-            <div className="flex items-center justify-between mb-8 pb-6 border-b border-slate-100 text-xs">
+            <div className="flex items-center justify-between mb-8 pb-6 border-b border-slate-200/50 text-xs">
               <span className="font-bold text-slate-400">Step {step} of 3</span>
               <div className="flex gap-2">
                 {[1, 2, 3].map((s) => (
                   <div
                     key={s}
                     className={`h-2 rounded-full transition-all ${
-                      s === step ? 'w-8 bg-brand-600' : s < step ? 'w-4 bg-emerald-500' : 'w-4 bg-slate-200'
+                      s === step ? 'w-8 bg-brand-600' : s < step ? 'w-4 bg-emerald-500' : 'w-4 bg-slate-200/80'
                     }`}
                   />
                 ))}
@@ -98,43 +98,41 @@ export default function FinderPage() {
                 <button
                   type="button"
                   onClick={() => setTripDuration('weekend')}
-                  className={`p-5 rounded-2xl border text-left transition-all ${
+                  className={`p-5 rounded-3xl border text-left transition-all ${
                     tripDuration === 'weekend'
-                      ? 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-500'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-brand-600 bg-brand-50/80 ring-2 ring-brand-500'
+                      : 'border-slate-200/80 bg-white/70 hover:bg-white'
                   }`}
                 >
                   <div className="text-2xl mb-2">⚡</div>
-                  <div className="font-bold text-sm text-slate-900">Weekend Escape</div>
-                  <div className="text-xs text-slate-500 mt-1">2 to 4 days getaway or business retreat</div>
+                  <div className="font-bold text-sm text-slate-900">Weekend Getaway</div>
+                  <div className="text-xs text-slate-500 mt-1">1 to 3 Days</div>
                 </button>
-
                 <button
                   type="button"
                   onClick={() => setTripDuration('vacation')}
-                  className={`p-5 rounded-2xl border text-left transition-all ${
+                  className={`p-5 rounded-3xl border text-left transition-all ${
                     tripDuration === 'vacation'
-                      ? 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-500'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-brand-600 bg-brand-50/80 ring-2 ring-brand-500'
+                      : 'border-slate-200/80 bg-white/70 hover:bg-white'
                   }`}
                 >
                   <div className="text-2xl mb-2">🏖️</div>
-                  <div className="font-bold text-sm text-slate-900">1 to 2 Weeks</div>
-                  <div className="text-xs text-slate-500 mt-1">Holiday trip, multi-city travel</div>
+                  <div className="font-bold text-sm text-slate-900">Standard Vacation</div>
+                  <div className="text-xs text-slate-500 mt-1">4 to 7 Days</div>
                 </button>
-
                 <button
                   type="button"
                   onClick={() => setTripDuration('international')}
-                  className={`p-5 rounded-2xl border text-left transition-all ${
+                  className={`p-5 rounded-3xl border text-left transition-all ${
                     tripDuration === 'international'
-                      ? 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-500'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-brand-600 bg-brand-50/80 ring-2 ring-brand-500'
+                      : 'border-slate-200/80 bg-white/70 hover:bg-white'
                   }`}
                 >
                   <div className="text-2xl mb-2">✈️</div>
-                  <div className="font-bold text-sm text-slate-900">Long-Haul Flight</div>
-                  <div className="text-xs text-slate-500 mt-1">International flights, US/Europe transit</div>
+                  <div className="font-bold text-sm text-slate-900">Long Holiday / Flight</div>
+                  <div className="text-xs text-slate-500 mt-1">8+ Days International</div>
                 </button>
               </div>
 
@@ -142,9 +140,9 @@ export default function FinderPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl flex items-center gap-2 transition-colors shadow-sm"
+                  className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs px-7 py-3.5 rounded-full flex items-center gap-2 shadow-md transition-all active:scale-95 border border-white/20"
                 >
-                  <span>Next Step</span>
+                  <span>Next Question</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -399,3 +397,4 @@ export default function FinderPage() {
     </div>
   );
 }
+

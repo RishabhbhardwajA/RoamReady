@@ -49,3 +49,4 @@ cartSchema.methods.calculateTotals = function() {
 };
 
 module.exports = mongoose.model('Cart', cartSchema);
+

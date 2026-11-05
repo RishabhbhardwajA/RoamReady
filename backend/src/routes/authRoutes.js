@@ -11,3 +11,4 @@ router.put('/profile', protect, authController.updateProfile);
 router.post('/addresses', protect, validate(addressSchema), authController.addAddress);
 
 module.exports = router;
+

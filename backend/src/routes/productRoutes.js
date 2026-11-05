@@ -11,3 +11,4 @@ router.get('/check-pincode/:pincode', productController.checkDeliveryPincode);
 router.get('/:slug', productController.getProductBySlug);
 
 module.exports = router;
+

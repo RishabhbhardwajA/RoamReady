@@ -769,3 +769,4 @@ module.exports = {
   seedCoupons,
   seedReviews
 };
+
