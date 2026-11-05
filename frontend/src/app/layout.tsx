@@ -9,6 +9,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FloatingCompareBar } from '@/components/compare/FloatingCompareBar';
+import { BackendConnectionStatus } from '@/components/layout/BackendConnectionStatus';
 
 export const metadata: Metadata = {
   title: 'RoamReady — Engineered Travel Gear Essentials & Luggage Accessories',
@@ -36,6 +37,8 @@ export default function RootLayout({
                 <Footer />
                 <CartDrawer />
                 <FloatingCompareBar />
+                {/* Temporary Diagnostic Status: Remove once connection is verified */}
+                <BackendConnectionStatus />
               </CompareProvider>
             </WishlistProvider>
           </CartProvider>
