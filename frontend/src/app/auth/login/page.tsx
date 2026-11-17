@@ -3,18 +3,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Compass, Lock, Mail, ArrowRight, Sparkles, AlertCircle, CheckCircle2, Copy } from 'lucide-react';
+import { Compass, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, loginDemoCustomer } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,26 +29,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleDemoCustomer = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await loginDemoCustomer();
-      router.push('/account');
-    } catch (err: any) {
-      setError(err.message || 'Demo login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fillDemoCredentials = () => {
-    setEmail('traveler@roamready.com');
-    setPassword('TravelGear2026!');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -76,46 +55,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Fake / Demo Login Credentials Box */}
-        <div className="p-4 bg-gradient-to-br from-amber-50 to-amber-100/60 border border-amber-200 rounded-2xl space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 font-bold text-amber-900 text-[11px] uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>Demo Customer Credentials</span>
-            </div>
-            <button
-              type="button"
-              onClick={fillDemoCredentials}
-              className="text-[10px] font-bold text-amber-800 hover:text-amber-950 flex items-center gap-1 bg-amber-200/60 hover:bg-amber-200 px-2 py-0.5 rounded-lg transition-colors"
-            >
-              {copied ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-              <span>{copied ? 'Filled!' : 'Fill Form'}</span>
-            </button>
-          </div>
-
-          <div className="bg-white/80 rounded-xl p-2.5 space-y-1 font-mono text-[11px] text-slate-700 border border-amber-200/60">
-            <div className="flex justify-between">
-              <span className="text-slate-400">Email:</span>
-              <span className="font-bold text-slate-900 select-all">traveler@roamready.com</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Password:</span>
-              <span className="font-bold text-slate-900 select-all">TravelGear2026!</span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleDemoCustomer}
-            disabled={loading}
-            className="w-full bg-amber-500 hover:bg-amber-600 text-obsidian-950 font-extrabold text-xs py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-98"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>1-Click Instant Sign In as Customer</span>
-          </button>
-        </div>
-
-        {/* Regular Login Form */}
+        {/* Standard Customer Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-xs font-bold text-slate-700 block mb-1">Email Address</label>

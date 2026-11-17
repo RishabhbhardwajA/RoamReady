@@ -79,7 +79,6 @@ export default function AdminDashboardPage() {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [copiedDemo, setCopiedDemo] = useState<string | null>(null);
 
   // Product Modal
   const [showProductModal, setShowProductModal] = useState(false);
@@ -168,13 +167,6 @@ export default function AdminDashboardPage() {
     } finally {
       setLoginLoading(false);
     }
-  };
-
-  const fillAdminCredentials = (email: string, pass: string, label: string) => {
-    setLoginEmail(email);
-    setLoginPassword(pass);
-    setCopiedDemo(label);
-    setTimeout(() => setCopiedDemo(null), 2000);
   };
 
   const handleCreateProduct = async (e: React.FormEvent) => {
@@ -363,65 +355,6 @@ export default function AdminDashboardPage() {
               <span>{loginError}</span>
             </div>
           )}
-
-          {/* Fake / Demo Admin & Staff Accounts */}
-          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 font-bold text-amber-300 text-[11px] uppercase tracking-wider">
-                <KeyRound className="w-3.5 h-3.5 text-amber-400" />
-                <span>Demo Admin Accounts</span>
-              </div>
-              <span className="text-[10px] text-slate-400">Click to fill</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => fillAdminCredentials('admin@roamready.com', 'TravelGear2026!', 'super')}
-                className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 rounded-xl text-left transition-all group"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-amber-300 text-[11px]">Super Admin</span>
-                  {copiedDemo === 'super' ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  ) : (
-                    <Copy className="w-3 h-3 text-slate-500 group-hover:text-slate-300" />
-                  )}
-                </div>
-                <div className="text-[10px] text-slate-300 font-mono mt-1">admin@roamready.com</div>
-                <div className="text-[10px] text-slate-500 font-mono">TravelGear2026!</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillAdminCredentials('ops@roamready.com', 'TravelGear2026!', 'ops')}
-                className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-400/40 rounded-xl text-left transition-all group"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-blue-300 text-[11px]">Operations Lead</span>
-                  {copiedDemo === 'ops' ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  ) : (
-                    <Copy className="w-3 h-3 text-slate-500 group-hover:text-slate-300" />
-                  )}
-                </div>
-                <div className="text-[10px] text-slate-300 font-mono mt-1">ops@roamready.com</div>
-                <div className="text-[10px] text-slate-500 font-mono">TravelGear2026!</div>
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={async () => {
-                await loginDemoAdmin();
-                loadAllAdminData();
-              }}
-              className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-obsidian-950 font-extrabold text-xs py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-1.5 active:scale-98"
-            >
-              <Zap className="w-3.5 h-3.5" />
-              <span>1-Click Sign In as Primary Super Admin</span>
-            </button>
-          </div>
 
           {/* Manual Admin / Team Member Sign In Form */}
           <form onSubmit={handleAdminManualLogin} className="space-y-3.5">
