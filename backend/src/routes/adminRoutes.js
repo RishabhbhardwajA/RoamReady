@@ -21,5 +21,9 @@ router.get('/coupons', adminController.getAdminCoupons);
 router.post('/coupons', adminController.createCoupon);
 router.get('/reviews', adminController.getAdminReviews);
 
+router.get('/team', adminController.getTeamMembers);
+router.post('/team', adminController.createTeamMember);
+router.delete('/team/:id', adminController.deleteTeamMember);
+
 module.exports = router;
 

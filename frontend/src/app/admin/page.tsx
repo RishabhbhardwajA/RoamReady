@@ -25,12 +25,21 @@ import {
   Activity,
   Crown,
   Zap,
+  UserCheck,
+  UserPlus,
+  Lock,
+  Mail,
+  Phone,
+  Shield,
+  KeyRound,
+  Copy,
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { apiClient, formatINR } from '@/lib/api';
 import { Product, Order, User, Coupon, Review, AdminMetrics } from '@/types';
 
-type AdminTab = 'overview' | 'products' | 'orders' | 'customers' | 'coupons' | 'reviews';
+type AdminTab = 'overview' | 'products' | 'orders' | 'customers' | 'coupons' | 'reviews' | 'team';
 
 const STATUS_COLORS: Record<string, string> = {
   pending:    'bg-amber-100 text-amber-700 border-amber-200',
@@ -41,9 +50,18 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled:  'bg-red-100 text-red-700 border-red-200',
 };
 
+const TEAM_ROLE_COLORS: Record<string, string> = {
+  'Founder & Super Admin':       'bg-amber-100 text-amber-800 border-amber-300 font-black',
+  'Operations & Dispatch Lead':  'bg-blue-100 text-blue-800 border-blue-300 font-bold',
+  'Inventory & Warehouse Lead':  'bg-emerald-100 text-emerald-800 border-emerald-300 font-bold',
+  'Customer Support Specialist': 'bg-purple-100 text-purple-800 border-purple-300 font-bold',
+  'Catalog & Product Manager':   'bg-pink-100 text-pink-800 border-pink-300 font-bold',
+  'Store Co-Manager':            'bg-indigo-100 text-indigo-800 border-indigo-300 font-bold',
+};
+
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const { user, loginDemoAdmin } = useAuth();
+  const { user, login, loginDemoAdmin } = useAuth();
 
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
@@ -52,8 +70,16 @@ export default function AdminDashboardPage() {
   const [customers, setCustomers] = useState<User[]>([]);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [teamMembers, setTeamMembers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Unauthenticated login form state
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [copiedDemo, setCopiedDemo] = useState<string | null>(null);
 
   // Product Modal
   const [showProductModal, setShowProductModal] = useState(false);
@@ -73,6 +99,15 @@ export default function AdminDashboardPage() {
   const [couponDesc, setCouponDesc] = useState('');
   const [couponVal, setCouponVal] = useState('10');
   const [couponMin, setCouponMin] = useState('499');
+
+  // Team Member Modal
+  const [showTeamModal, setShowTeamModal] = useState(false);
+  const [teamName, setTeamName] = useState('');
+  const [teamEmail, setTeamEmail] = useState('');
+  const [teamPassword, setTeamPassword] = useState('RoamTeam2026!');
+  const [teamRole, setTeamRole] = useState('Operations & Dispatch Lead');
+  const [teamPhone, setTeamPhone] = useState('+91 98765 00000');
+  const [isSavingTeamMember, setIsSavingTeamMember] = useState(false);
 
   // Toast
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
@@ -94,13 +129,14 @@ export default function AdminDashboardPage() {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
     try {
-      const [metricsRes, prodRes, ordRes, custRes, cpnRes, revRes] = await Promise.all([
+      const [metricsRes, prodRes, ordRes, custRes, cpnRes, revRes, teamRes] = await Promise.all([
         apiClient.get('/admin/metrics').catch(() => null),
         apiClient.get('/admin/products').catch(() => null),
         apiClient.get('/admin/orders').catch(() => null),
         apiClient.get('/admin/customers').catch(() => null),
         apiClient.get('/admin/coupons').catch(() => null),
         apiClient.get('/admin/reviews').catch(() => null),
+        apiClient.get('/admin/team').catch(() => null),
       ]);
       if (metricsRes?.data?.data?.metrics) setMetrics(metricsRes.data.data.metrics);
       if (prodRes?.data?.data?.products)   setProducts(prodRes.data.data.products);
@@ -108,6 +144,7 @@ export default function AdminDashboardPage() {
       if (custRes?.data?.data?.customers)  setCustomers(custRes.data.data.customers);
       if (cpnRes?.data?.data?.coupons)     setCoupons(cpnRes.data.data.coupons);
       if (revRes?.data?.data?.reviews)     setReviews(revRes.data.data.reviews);
+      if (teamRes?.data?.data?.team)       setTeamMembers(teamRes.data.data.team);
       if (isRefresh) showToast('Dashboard refreshed successfully');
     } catch (e) {
       console.error(e);
@@ -115,6 +152,29 @@ export default function AdminDashboardPage() {
       setLoading(false);
       setRefreshing(false);
     }
+  };
+
+  const handleAdminManualLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    setLoginError(null);
+    try {
+      const ok = await login(loginEmail, loginPassword);
+      if (!ok) {
+        setLoginError('Invalid credentials or unauthorized account.');
+      }
+    } catch (err: any) {
+      setLoginError(err.message || 'Login failed. Ensure account has admin privileges.');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const fillAdminCredentials = (email: string, pass: string, label: string) => {
+    setLoginEmail(email);
+    setLoginPassword(pass);
+    setCopiedDemo(label);
+    setTimeout(() => setCopiedDemo(null), 2000);
   };
 
   const handleCreateProduct = async (e: React.FormEvent) => {
@@ -229,12 +289,55 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleCreateTeamMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingTeamMember(true);
+    try {
+      const res = await apiClient.post('/admin/team', {
+        name: teamName,
+        email: teamEmail,
+        password: teamPassword,
+        teamRole,
+        phone: teamPhone
+      });
+      if (res.data.success) {
+        setTeamMembers([...teamMembers, res.data.data.member]);
+        setShowTeamModal(false);
+        setTeamName('');
+        setTeamEmail('');
+        setTeamPhone('+91 98765 00000');
+        showToast(`Team member ${teamName} added successfully!`);
+      }
+    } catch (err: any) {
+      showToast(err.response?.data?.message || 'Failed to add team member', 'error');
+    } finally {
+      setIsSavingTeamMember(false);
+    }
+  };
+
+  const handleDeleteTeamMember = async (id: string, email: string, name: string) => {
+    if (email === 'admin@roamready.com') {
+      alert('Cannot delete the primary Founder & Super Admin account.');
+      return;
+    }
+    if (!confirm(`Are you sure you want to revoke admin portal access for ${name} (${email})?`)) return;
+    try {
+      const res = await apiClient.delete(`/admin/team/${id}`);
+      if (res.data.success) {
+        setTeamMembers(teamMembers.filter(m => m._id !== id));
+        showToast(`Revoked access for ${name}`);
+      }
+    } catch (err: any) {
+      showToast(err.response?.data?.message || 'Failed to remove team member', 'error');
+    }
+  };
+
   // ── UNAUTHENTICATED VIEW ──────────────────────────────────────────────────
   if (!user || user.role !== 'admin') {
     return (
       <div
-        className="min-h-screen flex items-center justify-center px-4 py-16"
-        style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0c1322 100%)' }}
+        className="min-h-screen flex items-center justify-center px-4 py-12"
+        style={{ background: 'linear-gradient(135deg, #090e17 0%, #0f172a 40%, #1e293b 80%, #090e17 100%)' }}
       >
         {/* animated blobs */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -242,34 +345,130 @@ export default function AdminDashboardPage() {
           <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-amber-500/15 blur-3xl animate-pulse delay-1000" />
         </div>
 
-        <div className="relative glass-dark max-w-md w-full p-10 text-center space-y-6">
-          <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/30">
-            <Crown className="w-8 h-8 text-white" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-extrabold text-white">Admin Access Required</h2>
-            <p className="text-sm text-slate-400 mt-2">
-              Authenticate as a RoamReady Store Administrator to access the Command Center.
+        <div className="relative glass-dark max-w-lg w-full p-8 sm:p-10 text-left space-y-6 border border-white/10 shadow-2xl">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/30">
+              <Crown className="w-7 h-7 text-obsidian-950" />
+            </div>
+            <h2 className="text-2xl font-black text-white tracking-tight">RoamReady Command Center</h2>
+            <p className="text-xs text-slate-400">
+              Hidden management console for store administrators & team leads.
             </p>
           </div>
-          <div className="glass-pill bg-white/5 border border-white/10 p-4 text-left space-y-1">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Demo Credentials</p>
-            <p className="text-xs text-slate-300 font-mono">admin@roamready.com</p>
-            <p className="text-xs text-slate-300 font-mono">TravelGear2026!</p>
+
+          {loginError && (
+            <div className="p-3 bg-red-950/80 border border-red-800 rounded-2xl flex items-center gap-2 text-xs text-red-300">
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+              <span>{loginError}</span>
+            </div>
+          )}
+
+          {/* Fake / Demo Admin & Staff Accounts */}
+          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 font-bold text-amber-300 text-[11px] uppercase tracking-wider">
+                <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+                <span>Demo Admin Accounts</span>
+              </div>
+              <span className="text-[10px] text-slate-400">Click to fill</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => fillAdminCredentials('admin@roamready.com', 'TravelGear2026!', 'super')}
+                className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 rounded-xl text-left transition-all group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-amber-300 text-[11px]">Super Admin</span>
+                  {copiedDemo === 'super' ? (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3 h-3 text-slate-500 group-hover:text-slate-300" />
+                  )}
+                </div>
+                <div className="text-[10px] text-slate-300 font-mono mt-1">admin@roamready.com</div>
+                <div className="text-[10px] text-slate-500 font-mono">TravelGear2026!</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => fillAdminCredentials('ops@roamready.com', 'TravelGear2026!', 'ops')}
+                className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-400/40 rounded-xl text-left transition-all group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-blue-300 text-[11px]">Operations Lead</span>
+                  {copiedDemo === 'ops' ? (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3 h-3 text-slate-500 group-hover:text-slate-300" />
+                  )}
+                </div>
+                <div className="text-[10px] text-slate-300 font-mono mt-1">ops@roamready.com</div>
+                <div className="text-[10px] text-slate-500 font-mono">TravelGear2026!</div>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={async () => {
+                await loginDemoAdmin();
+                loadAllAdminData();
+              }}
+              className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-obsidian-950 font-extrabold text-xs py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-1.5 active:scale-98"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>1-Click Sign In as Primary Super Admin</span>
+            </button>
           </div>
-          <button
-            onClick={async () => {
-              await loginDemoAdmin();
-              loadAllAdminData();
-            }}
-            className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-obsidian-950 font-extrabold text-sm py-4 rounded-full transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5"
-          >
-            <Zap className="w-4 h-4 inline mr-2" />
-            1-Click Sign In as Admin
-          </button>
-          <Link href="/" className="block text-xs text-slate-500 hover:text-slate-300 transition-colors">
-            ← Back to Store
-          </Link>
+
+          {/* Manual Admin / Team Member Sign In Form */}
+          <form onSubmit={handleAdminManualLogin} className="space-y-3.5">
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1">Admin / Team Email</label>
+              <div className="relative">
+                <input
+                  type="email"
+                  required
+                  placeholder="admin@roamready.com"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  className="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1">Password</label>
+              <div className="relative">
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  className="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loginLoading}
+              className="w-full bg-brand-600 hover:bg-brand-500 text-white font-black text-xs py-3 rounded-xl transition-all shadow-md shadow-brand-600/30 flex items-center justify-center gap-2 active:scale-98 disabled:opacity-50"
+            >
+              <span>{loginLoading ? 'Authenticating Staff...' : 'Sign In to Admin Portal'}</span>
+            </button>
+          </form>
+
+          <div className="text-center pt-2 border-t border-white/10">
+            <Link href="/" className="text-xs text-slate-400 hover:text-slate-200 transition-colors">
+              ← Return to RoamReady Storefront
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -300,6 +499,7 @@ export default function AdminDashboardPage() {
     { key: 'products',   label: 'Products',   icon: <Package className="w-4 h-4" />,   count: products.length },
     { key: 'orders',     label: 'Orders',     icon: <ShoppingBag className="w-4 h-4" />, count: orders.length },
     { key: 'customers',  label: 'Customers',  icon: <Users className="w-4 h-4" />,     count: customers.length },
+    { key: 'team',       label: 'Team & Staff', icon: <UserCheck className="w-4 h-4" />, count: teamMembers.length },
     { key: 'coupons',    label: 'Coupons',    icon: <Tag className="w-4 h-4" />,       count: coupons.length },
     { key: 'reviews',    label: 'Reviews',    icon: <Star className="w-4 h-4" />,      count: reviews.length },
   ];
@@ -337,15 +537,15 @@ export default function AdminDashboardPage() {
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="bg-amber-400/20 text-amber-300 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-amber-400/20">
-                Store Administrator
+                {user.teamRole || 'Store Administrator'}
               </span>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs text-slate-400">Live</span>
+              <span className="text-xs text-slate-400">Live Team Portal</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               RoamReady Command Center
             </h1>
-            <p className="text-xs text-slate-400 mt-0.5">Signed in as {user.email}</p>
+            <p className="text-xs text-slate-400 mt-0.5">Signed in as <strong className="text-slate-200">{user.name}</strong> ({user.email})</p>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -416,11 +616,11 @@ export default function AdminDashboardPage() {
                   iconBg: 'bg-brand-50',
                 },
                 {
-                  label: 'Customers',
-                  value: String(metrics?.totalCustomers || customers.length),
-                  sub: 'PAN-India verified',
-                  subColor: 'text-slate-400',
-                  icon: <Users className="w-5 h-5 text-purple-500" />,
+                  label: 'Team & Staff',
+                  value: String(teamMembers.length),
+                  sub: 'Active administrators',
+                  subColor: 'text-purple-600',
+                  icon: <UserCheck className="w-5 h-5 text-purple-500" />,
                   iconBg: 'bg-purple-50',
                 },
                 {
@@ -491,6 +691,101 @@ export default function AdminDashboardPage() {
                 {orders.length === 0 && (
                   <p className="py-6 text-center text-xs text-slate-400">No orders yet</p>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════════ TAB: TEAM & STAFF ════════════════════ */}
+        {activeTab === 'team' && (
+          <div className="space-y-5 animate-in fade-in duration-300">
+            <div className="glass-panel p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-black text-slate-900">Team & Staff Roster</p>
+                <p className="text-xs text-slate-500">
+                  {teamMembers.length} team members with active portal access · Manage roles & invitations
+                </p>
+              </div>
+              <button
+                onClick={() => setShowTeamModal(true)}
+                className="flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-black px-5 py-2.5 rounded-full shadow-lg shadow-brand-600/25 hover:shadow-brand-600/40 transition-all hover:-translate-y-0.5"
+              >
+                <UserPlus className="w-4 h-4" />
+                Add Team Member
+              </button>
+            </div>
+
+            <div className="glass-panel overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/80 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+                      <th className="p-4">Team Member</th>
+                      <th className="p-4">Designation & Role</th>
+                      <th className="p-4">Contact Phone</th>
+                      <th className="p-4">Access Status</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100/80">
+                    {teamMembers.map(member => (
+                      <tr key={member._id} className="hover:bg-brand-50/30 transition-colors">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-sm flex-shrink-0">
+                              {member.name?.[0]?.toUpperCase() || 'A'}
+                            </div>
+                            <div>
+                              <div className="font-bold text-slate-900 flex items-center gap-2">
+                                <span>{member.name}</span>
+                                {member.email === 'admin@roamready.com' && (
+                                  <span className="bg-amber-100 text-amber-800 text-[9px] font-black px-2 py-0.5 rounded-full border border-amber-300">
+                                    Primary Admin
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-slate-500 font-mono">{member.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className={`text-[11px] px-3 py-1 rounded-full border ${TEAM_ROLE_COLORS[member.teamRole || ''] || 'bg-slate-100 text-slate-700 border-slate-200 font-bold'}`}>
+                            {member.teamRole || 'Store Administrator'}
+                          </span>
+                        </td>
+                        <td className="p-4 text-slate-600 font-mono text-[11px]">
+                          {member.phone || '+91 98765 43210'}
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-1.5 text-emerald-700 font-bold text-[11px]">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span>Active Portal Access</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-right">
+                          {member.email !== 'admin@roamready.com' ? (
+                            <button
+                              onClick={() => handleDeleteTeamMember(member._id, member.email, member.name)}
+                              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                              title="Revoke Portal Access"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 italic font-mono pr-2">Protected</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    {teamMembers.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="p-10 text-center text-sm text-slate-400">
+                          No team members registered yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -676,7 +971,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-5 animate-in fade-in duration-300">
             <div className="glass-panel p-4">
               <p className="text-sm font-black text-slate-900">Customer Registry</p>
-              <p className="text-xs text-slate-500">{customers.length} registered users · PAN-India</p>
+              <p className="text-xs text-slate-500">{customers.length} registered shoppers · PAN-India</p>
             </div>
             <div className="glass-panel overflow-hidden">
               <div className="overflow-x-auto">
@@ -811,6 +1106,108 @@ export default function AdminDashboardPage() {
         )}
 
       </div>
+
+      {/* ══════════════ MODAL: ADD TEAM MEMBER ══════════════ */}
+      {showTeamModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-950/70 backdrop-blur-md">
+          <div className="glass-panel max-w-md w-full p-7 space-y-5 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+                  <UserPlus className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-black text-base text-slate-900">Add Team Member</h3>
+                  <p className="text-[11px] text-slate-500">Grant portal access to staff & operations</p>
+                </div>
+              </div>
+              <button onClick={() => setShowTeamModal(false)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
+                <X className="w-4 h-4 text-slate-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTeamMember} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Aarav Gupta"
+                  value={teamName}
+                  onChange={e => setTeamName(e.target.value)}
+                  className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">Work Email *</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. aarav@roamready.com"
+                  value={teamEmail}
+                  onChange={e => setTeamEmail(e.target.value)}
+                  className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-300"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">Team Designation / Role *</label>
+                <select
+                  value={teamRole}
+                  onChange={e => setTeamRole(e.target.value)}
+                  className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                >
+                  <option value="Operations & Dispatch Lead">Operations & Dispatch Lead</option>
+                  <option value="Inventory & Warehouse Lead">Inventory & Warehouse Lead</option>
+                  <option value="Customer Support Specialist">Customer Support Specialist</option>
+                  <option value="Catalog & Product Manager">Catalog & Product Manager</option>
+                  <option value="Store Co-Manager">Store Co-Manager</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1.5">Password *</label>
+                  <input
+                    type="text"
+                    required
+                    value={teamPassword}
+                    onChange={e => setTeamPassword(e.target.value)}
+                    className="w-full bg-white/70 border border-slate-200 rounded-2xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1.5">Contact Phone</label>
+                  <input
+                    type="text"
+                    value={teamPhone}
+                    onChange={e => setTeamPhone(e.target.value)}
+                    className="w-full bg-white/70 border border-slate-200 rounded-2xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-300"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowTeamModal(false)}
+                  className="w-1/2 py-3 rounded-full border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingTeamMember}
+                  className="w-1/2 bg-brand-600 hover:bg-brand-500 text-white font-black py-3 rounded-full text-xs shadow-lg shadow-brand-600/25 transition-all disabled:opacity-50"
+                >
+                  {isSavingTeamMember ? 'Creating Account…' : 'Add Team Member'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* ══════════════ MODAL: ADD PRODUCT ══════════════ */}
       {showProductModal && (

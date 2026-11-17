@@ -132,6 +132,54 @@ const getAdminReviews = async (req, res, next) => {
   }
 };
 
+const getTeamMembers = async (req, res, next) => {
+  try {
+    const team = await dataStore.getTeamMembers();
+    return ApiResponse.success(res, 'Team members fetched', { team });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const createTeamMember = async (req, res, next) => {
+  try {
+    const { name, email, password, teamRole, phone } = req.body;
+    if (!name || !email || !password) {
+      return ApiResponse.error(res, 'Name, email, and password are required', 400);
+    }
+
+    const existingUser = await dataStore.findUserByEmail(email);
+    if (existingUser) {
+      return ApiResponse.error(res, 'An account with this email already exists', 409);
+    }
+
+    const member = await dataStore.createTeamMember({
+      name,
+      email,
+      password,
+      teamRole: teamRole || 'Store Admin',
+      phone: phone || ''
+    });
+
+    return ApiResponse.success(res, 'Team member added successfully', { member }, 201);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteTeamMember = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await dataStore.deleteTeamMember(id);
+    return ApiResponse.success(res, 'Team member access revoked successfully');
+  } catch (error) {
+    if (error.message.includes('primary super admin')) {
+      return ApiResponse.error(res, 'Cannot remove the primary Super Admin account', 403);
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   getDashboardStats,
   getAdminProducts,
@@ -143,6 +191,9 @@ module.exports = {
   getAdminCustomers,
   getAdminCoupons,
   createCoupon,
-  getAdminReviews
+  getAdminReviews,
+  getTeamMembers,
+  createTeamMember,
+  deleteTeamMember
 };
 

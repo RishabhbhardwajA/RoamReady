@@ -19,6 +19,8 @@ let memoryStore = {
       email: 'admin@roamready.com',
       password: '', // will be hashed below
       role: 'admin',
+      teamRole: 'Founder & Super Admin',
+      isPrimaryAdmin: true,
       phone: '+91 98765 43210',
       addresses: [
         {
@@ -34,6 +36,18 @@ let memoryStore = {
           isDefault: true
         }
       ],
+      createdAt: new Date().toISOString()
+    },
+    {
+      _id: 'usr_admin_002',
+      name: 'Priya Sharma',
+      email: 'ops@roamready.com',
+      password: '',
+      role: 'admin',
+      teamRole: 'Operations & Dispatch Lead',
+      isPrimaryAdmin: false,
+      phone: '+91 98765 43211',
+      addresses: [],
       createdAt: new Date().toISOString()
     },
     {
@@ -71,8 +85,9 @@ let memoryStore = {
 
 // Hash default user passwords on startup synchronously so initial logins succeed immediately
 const defaultPasswordHash = bcrypt.hashSync('TravelGear2026!', 10);
-memoryStore.users[0].password = defaultPasswordHash;
-memoryStore.users[1].password = defaultPasswordHash;
+memoryStore.users.forEach(u => {
+  if (!u.password) u.password = defaultPasswordHash;
+});
 
 const dataStore = {
   // Category operations
@@ -325,6 +340,73 @@ const dataStore = {
       } catch (e) { }
     }
     return memoryStore.users.map(({ password, ...u }) => u);
+  },
+
+  async getTeamMembers() {
+    if (getDBStatus().isConnected) {
+      try {
+        const team = await User.find({ role: 'admin' }).select('-password').sort({ createdAt: 1 }).lean();
+        if (team && team.length > 0) return team;
+      } catch (e) { }
+    }
+    return memoryStore.users.filter(u => u.role === 'admin').map(({ password, ...u }) => u);
+  },
+
+  async createTeamMember(data) {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    if (getDBStatus().isConnected) {
+      try {
+        const user = await User.create({
+          name: data.name,
+          email: data.email.toLowerCase().trim(),
+          password: hashedPassword,
+          role: 'admin',
+          teamRole: data.teamRole || 'Store Admin',
+          phone: data.phone || '',
+          isPrimaryAdmin: false
+        });
+        const obj = user.toObject();
+        delete obj.password;
+        return obj;
+      } catch (e) { }
+    }
+    const newMember = {
+      _id: `usr_team_${Date.now()}`,
+      name: data.name,
+      email: data.email.toLowerCase().trim(),
+      password: hashedPassword,
+      role: 'admin',
+      teamRole: data.teamRole || 'Store Admin',
+      phone: data.phone || '',
+      isPrimaryAdmin: false,
+      addresses: [],
+      createdAt: new Date().toISOString()
+    };
+    memoryStore.users.push(newMember);
+    const { password, ...sanitized } = newMember;
+    return sanitized;
+  },
+
+  async deleteTeamMember(id) {
+    if (getDBStatus().isConnected) {
+      try {
+        const user = await User.findById(id);
+        if (user && (user.isPrimaryAdmin || user.email === 'admin@roamready.com')) {
+          throw new Error('Cannot delete primary super admin');
+        }
+        await User.findByIdAndDelete(id);
+        return true;
+      } catch (e) { }
+    }
+    const idx = memoryStore.users.findIndex(u => u._id.toString() === id.toString());
+    if (idx !== -1) {
+      if (memoryStore.users[idx].isPrimaryAdmin || memoryStore.users[idx].email === 'admin@roamready.com') {
+        throw new Error('Cannot delete primary super admin');
+      }
+      memoryStore.users.splice(idx, 1);
+      return true;
+    }
+    return false;
   },
 
   // Cart operations

@@ -84,7 +84,6 @@ export const Footer: React.FC = () => {
             <li><Link href="/compare" className="hover:text-white transition-colors">Gear Comparison Tool</Link></li>
             <li><Link href="/account/orders" className="hover:text-white transition-colors">Track BlueDart Order</Link></li>
             <li><Link href="/account" className="hover:text-white transition-colors">Manage Addresses</Link></li>
-            <li><Link href="/admin" className="hover:text-amber-accent transition-colors">Store Admin Portal</Link></li>
           </ul>
         </div>
 

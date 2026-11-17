@@ -126,9 +126,12 @@ export interface User {
   name: string;
   email: string;
   role: 'customer' | 'admin';
+  teamRole?: string;
+  isPrimaryAdmin?: boolean;
   phone?: string;
   addresses?: Address[];
   avatar?: string;
+  createdAt?: string;
 }
 
 export interface OrderItem {

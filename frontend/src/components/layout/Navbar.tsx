@@ -301,15 +301,6 @@ export const Navbar: React.FC = () => {
                       >
                         My Orders & Tracking
                       </Link>
-                      {user.role === 'admin' && (
-                        <Link
-                          href="/admin"
-                          onClick={() => setAccountMenuOpen(false)}
-                          className="block px-4 py-2 text-brand-600 font-bold hover:bg-brand-50 transition-colors rounded-xl mx-1"
-                        >
-                          Admin Dashboard
-                        </Link>
-                      )}
                       <div className="border-t border-slate-100 my-1" />
                       <button
                         onClick={() => {
@@ -337,14 +328,6 @@ export const Navbar: React.FC = () => {
                         className="block px-4 py-2 text-brand-600 hover:bg-brand-50 transition-colors rounded-xl mx-1"
                       >
                         Create an Account
-                      </Link>
-                      <div className="border-t border-slate-100 my-1" />
-                      <Link
-                        href="/admin"
-                        onClick={() => setAccountMenuOpen(false)}
-                        className="block px-4 py-2 text-xs text-slate-600 hover:bg-slate-50 rounded-xl mx-1"
-                      >
-                        Admin Portal
                       </Link>
                     </>
                   )}

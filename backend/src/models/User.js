@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true, select: false },
   role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
+  teamRole: { type: String, default: 'Store Admin' },
+  isPrimaryAdmin: { type: Boolean, default: false },
   addresses: [addressSchema],
   avatar: { type: String, default: '' },
   phone: { type: String, default: '' }

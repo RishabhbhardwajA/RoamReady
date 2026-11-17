@@ -150,15 +150,6 @@ export default function AccountPage() {
                   <Heart className="w-4 h-4 text-slate-400" />
                   <span>Saved Wishlist</span>
                 </Link>
-                {user.role === 'admin' && (
-                  <Link
-                    href="/admin"
-                    className="flex items-center gap-2.5 p-2.5 rounded-xl text-amber-700 hover:bg-amber-50 font-bold text-xs transition-colors"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-amber-600" />
-                    <span>Admin Dashboard</span>
-                  </Link>
-                )}
                 <button
                   onClick={() => {
                     logout();
