@@ -161,7 +161,19 @@ export default function AdminDashboardPage() {
       const ok = await login(loginEmail, loginPassword);
       if (!ok) {
         setLoginError('Invalid credentials or unauthorized account.');
+        return;
       }
+      const stored = typeof window !== 'undefined' ? localStorage.getItem('roamready_user') : null;
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed.role !== 'admin') {
+            setLoginError('Access denied: This account does not have administrator privileges.');
+            return;
+          }
+        } catch (e) {}
+      }
+      await loadAllAdminData();
     } catch (err: any) {
       setLoginError(err.message || 'Login failed. Ensure account has admin privileges.');
     } finally {

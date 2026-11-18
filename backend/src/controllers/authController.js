@@ -45,7 +45,10 @@ const login = async (req, res, next) => {
       return ApiResponse.error(res, 'Invalid email or password.', 401);
     }
 
-    const { password: _, ...user } = userWithPassword;
+    const rawUser = typeof userWithPassword.toObject === 'function'
+      ? userWithPassword.toObject()
+      : { ...userWithPassword };
+    const { password: _, ...user } = rawUser;
     const token = generateToken({ id: user._id, email: user.email, role: user.role });
 
     return ApiResponse.success(res, 'Login successful.', {
