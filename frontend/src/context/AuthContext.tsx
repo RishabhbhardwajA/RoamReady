@@ -9,8 +9,6 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  loginDemoCustomer: () => Promise<void>;
-  loginDemoAdmin: () => Promise<void>;
   register: (name: string, email: string, password: string, phone?: string) => Promise<boolean>;
   logout: () => void;
   updateUser: (data: Partial<User>) => void;
@@ -55,14 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const loginDemoCustomer = async () => {
-    await login('traveler@roamready.com', 'TravelGear2026!');
-  };
-
-  const loginDemoAdmin = async () => {
-    await login('admin@roamready.com', 'TravelGear2026!');
-  };
-
   const register = async (name: string, email: string, password: string, phone?: string): Promise<boolean> => {
     try {
       const res = await apiClient.post('/auth/register', { name, email, password, phone });
@@ -102,8 +92,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         loading,
         login,
-        loginDemoCustomer,
-        loginDemoAdmin,
         register,
         logout,
         updateUser,

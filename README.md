@@ -145,18 +145,8 @@ Visit **`http://localhost:3000`** in your browser.
 
 ---
 
-## 🔑 Demo & Test Credentials
+## 🎟️ Promo Coupons for Checkout
 
-Pre-configured credentials for quick evaluation:
-
-| Account Type | Email | Password | Access Capabilities |
-| :--- | :--- | :--- | :--- |
-| **Store Customer** | `traveler@roamready.com` | `TravelGear2026!` | Checkout, order history, live BlueDart tracking, wishlist |
-| **Store Administrator** | `admin@roamready.com` | `TravelGear2026!` | Full admin dashboard, revenue KPIs, product CRUD, inventory, order status updates, coupon generation |
-
-*(Note: The login page at `/auth/login` includes **1-Click Fast Evaluation Buttons** to log in instantly without typing).*
-
-### Promo Coupons for Checkout
 * `WELCOME10`: 10% discount on orders above ₹499
 * `ROAMFREEDOM`: Flat ₹200 off on orders above ₹1499
 * `FLYREADY`: 15% off on travel kits above ₹1999

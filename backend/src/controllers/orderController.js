@@ -121,9 +121,14 @@ const getOrderById = async (req, res, next) => {
       return ApiResponse.error(res, 'Order not found', 404);
     }
 
-    // If authenticated customer, ensure order belongs to them (or admin)
-    if (req.user && req.user.role !== 'admin' && order.user && order.user.toString() !== req.user._id.toString()) {
-      return ApiResponse.error(res, 'Unauthorized access to this order', 403);
+    // If order is linked to a registered account, ensure user is authenticated & authorized
+    if (order.user) {
+      if (!req.user) {
+        return ApiResponse.error(res, 'Authentication required to access this order', 401);
+      }
+      if (req.user.role !== 'admin' && order.user.toString() !== req.user._id.toString()) {
+        return ApiResponse.error(res, 'Unauthorized access to this order', 403);
+      }
     }
 
     return ApiResponse.success(res, 'Order details fetched', { order });
