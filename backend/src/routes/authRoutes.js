@@ -9,6 +9,7 @@ router.post('/login', validate(loginSchema), authController.login);
 router.get('/me', protect, authController.getMe);
 router.put('/profile', protect, authController.updateProfile);
 router.post('/addresses', protect, validate(addressSchema), authController.addAddress);
+router.put('/change-password', protect, authController.changePassword);
 
 module.exports = router;
 

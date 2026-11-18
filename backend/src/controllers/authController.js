@@ -101,11 +101,43 @@ const addAddress = async (req, res, next) => {
   }
 };
 
+const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return ApiResponse.error(res, 'Current password and new password are required.', 400);
+    }
+    if (newPassword.length < 8) {
+      return ApiResponse.error(res, 'New password must be at least 8 characters.', 400);
+    }
+
+    // Get the user with password
+    const userWithPassword = await dataStore.findUserByEmail(req.user.email, true);
+    if (!userWithPassword) {
+      return ApiResponse.error(res, 'User not found.', 404);
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, userWithPassword.password);
+    if (!isMatch) {
+      return ApiResponse.error(res, 'Current password is incorrect.', 401);
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    await dataStore.updateUser(req.user._id, { password: hashedNewPassword });
+
+    return ApiResponse.success(res, 'Password changed successfully.');
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   getMe,
   updateProfile,
-  addAddress
+  addAddress,
+  changePassword
 };
 

@@ -14,13 +14,25 @@ const { seedCategories, seedProducts, seedCoupons, seedReviews } = require('./se
 let memoryStore = {
   users: [
     {
+      _id: 'usr_admin_000',
+      name: 'Rishabh',
+      email: 'rishabh@roamready.com',
+      password: '', // will be hashed below
+      role: 'admin',
+      teamRole: 'Founder & Super Admin',
+      isPrimaryAdmin: true,
+      phone: '+91 98765 43210',
+      addresses: [],
+      createdAt: new Date().toISOString()
+    },
+    {
       _id: 'usr_admin_001',
       name: 'RoamReady Admin',
       email: 'admin@roamready.com',
       password: '', // will be hashed below
       role: 'admin',
-      teamRole: 'Founder & Super Admin',
-      isPrimaryAdmin: true,
+      teamRole: 'Store Administrator',
+      isPrimaryAdmin: false,
       phone: '+91 98765 43210',
       addresses: [
         {
@@ -391,7 +403,7 @@ const dataStore = {
     if (getDBStatus().isConnected) {
       try {
         const user = await User.findById(id);
-        if (user && (user.isPrimaryAdmin || user.email === 'admin@roamready.com')) {
+        if (user && (user.isPrimaryAdmin || user.email === 'rishabh@roamready.com' || user.email === 'admin@roamready.com')) {
           throw new Error('Cannot delete primary super admin');
         }
         await User.findByIdAndDelete(id);
@@ -400,7 +412,7 @@ const dataStore = {
     }
     const idx = memoryStore.users.findIndex(u => u._id.toString() === id.toString());
     if (idx !== -1) {
-      if (memoryStore.users[idx].isPrimaryAdmin || memoryStore.users[idx].email === 'admin@roamready.com') {
+      if (memoryStore.users[idx].isPrimaryAdmin || memoryStore.users[idx].email === 'rishabh@roamready.com' || memoryStore.users[idx].email === 'admin@roamready.com') {
         throw new Error('Cannot delete primary super admin');
       }
       memoryStore.users.splice(idx, 1);

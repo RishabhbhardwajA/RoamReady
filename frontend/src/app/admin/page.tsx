@@ -61,7 +61,7 @@ const TEAM_ROLE_COLORS: Record<string, string> = {
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const { user, login, loginDemoAdmin } = useAuth();
+  const { user, login } = useAuth();
 
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
@@ -308,7 +308,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleDeleteTeamMember = async (id: string, email: string, name: string) => {
-    if (email === 'admin@roamready.com') {
+    if (email === 'rishabh@roamready.com' || email === 'admin@roamready.com') {
       alert('Cannot delete the primary Founder & Super Admin account.');
       return;
     }
@@ -671,7 +671,7 @@ export default function AdminDashboardPage() {
                             <div>
                               <div className="font-bold text-slate-900 flex items-center gap-2">
                                 <span>{member.name}</span>
-                                {member.email === 'admin@roamready.com' && (
+                                {(member.isPrimaryAdmin || member.email === 'rishabh@roamready.com' || member.email === 'admin@roamready.com') && (
                                   <span className="bg-amber-100 text-amber-800 text-[9px] font-black px-2 py-0.5 rounded-full border border-amber-300">
                                     Primary Admin
                                   </span>
@@ -696,7 +696,7 @@ export default function AdminDashboardPage() {
                           </div>
                         </td>
                         <td className="p-4 text-right">
-                          {member.email !== 'admin@roamready.com' ? (
+                          {(!member.isPrimaryAdmin && member.email !== 'rishabh@roamready.com' && member.email !== 'admin@roamready.com') ? (
                             <button
                               onClick={() => handleDeleteTeamMember(member._id, member.email, member.name)}
                               className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"

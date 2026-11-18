@@ -11,7 +11,10 @@ import {
   Plus,
   ShieldCheck,
   Check,
-  LogOut
+  LogOut,
+  Lock,
+  AlertCircle,
+  CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { apiClient } from '@/lib/api';
@@ -25,6 +28,14 @@ export default function AccountPage() {
   const [phone, setPhone] = useState(user?.phone || '');
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  // Password change state
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
 
   // New Address Modal
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -56,6 +67,40 @@ export default function AccountPage() {
       console.error(e);
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(false);
+
+    if (newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters.');
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError('New passwords do not match.');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const res = await apiClient.put('/auth/change-password', {
+        currentPassword,
+        newPassword,
+      });
+      if (res.data.success) {
+        setPasswordSuccess(true);
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        setTimeout(() => setPasswordSuccess(false), 4000);
+      }
+    } catch (err: any) {
+      setPasswordError(err.response?.data?.message || 'Failed to change password.');
+    } finally {
+      setPasswordLoading(false);
     }
   };
 
@@ -217,6 +262,98 @@ export default function AccountPage() {
                       <Check className="w-3.5 h-3.5" /> Updated!
                     </span>
                   )}
+                </div>
+              </form>
+            </div>
+
+            {/* Change Password */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 pb-3 border-b border-slate-100">
+                Change Password
+              </h2>
+
+              {passwordError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-xs text-red-700">
+                  <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                  <span>{passwordError}</span>
+                </div>
+              )}
+
+              {passwordSuccess && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs text-emerald-700">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                  <span>Password changed successfully!</span>
+                </div>
+              )}
+
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Current Password</label>
+                  <div className="relative">
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="w-full bg-slate-100 rounded-xl pl-9 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    />
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">New Password (min 8 chars)</label>
+                    <div className="relative">
+                      <input
+                        type="password"
+                        required
+                        placeholder="••••••••"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className={`w-full bg-slate-100 rounded-xl pl-9 px-3 py-2 text-xs focus:outline-none focus:ring-2 ${
+                          newPassword.length > 0 && newPassword.length < 8 ? 'ring-2 ring-red-400 focus:ring-red-400' : 'focus:ring-brand-500'
+                        }`}
+                      />
+                      <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    </div>
+                    {newPassword.length > 0 && newPassword.length < 8 && (
+                      <p className="text-[11px] text-red-500 mt-1">Must be at least 8 characters</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">Confirm New Password</label>
+                    <div className="relative">
+                      <input
+                        type="password"
+                        required
+                        placeholder="••••••••"
+                        value={confirmNewPassword}
+                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                        className={`w-full bg-slate-100 rounded-xl pl-9 px-3 py-2 text-xs focus:outline-none focus:ring-2 ${
+                          confirmNewPassword.length > 0 && newPassword !== confirmNewPassword ? 'ring-2 ring-red-400 focus:ring-red-400' : confirmNewPassword.length > 0 && newPassword === confirmNewPassword ? 'ring-2 ring-emerald-400 focus:ring-emerald-400' : 'focus:ring-brand-500'
+                        }`}
+                      />
+                      <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      {confirmNewPassword.length > 0 && newPassword === confirmNewPassword && (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 absolute right-3 top-1/2 -translate-y-1/2" />
+                      )}
+                    </div>
+                    {confirmNewPassword.length > 0 && newPassword !== confirmNewPassword && (
+                      <p className="text-[11px] text-red-500 mt-1">Passwords do not match</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={passwordLoading || (newPassword.length > 0 && newPassword.length < 8) || (confirmNewPassword.length > 0 && newPassword !== confirmNewPassword)}
+                    className="bg-obsidian-950 hover:bg-slate-800 text-white font-bold text-xs px-6 py-2.5 rounded-xl transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {passwordLoading ? 'Changing...' : 'Change Password'}
+                  </button>
                 </div>
               </form>
             </div>
