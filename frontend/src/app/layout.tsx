@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   title: 'RoamReady — Engineered Travel Gear Essentials & Luggage Accessories',
   description: 'Specialised online store for TSA combination locks, privacy luggage tags, compression packing cubes, heavy-duty baggage straps, and packable travel duffels.',
   keywords: 'TSA lock, luggage accessories, compression cubes, luggage tags, travel gear, duffel bag, flight essentials India',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
