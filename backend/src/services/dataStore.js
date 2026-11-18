@@ -217,13 +217,15 @@ const dataStore = {
   },
 
   async findProductById(id) {
+    if (!id) return null;
+    const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
         const prod = await Product.findById(id).lean();
         if (prod) return prod;
       } catch (e) { }
     }
-    return memoryStore.products.find(p => p._id.toString() === id.toString()) || null;
+    return memoryStore.products.find(p => p && p._id && String(p._id) === targetId) || null;
   },
 
   async createProduct(data) {
@@ -244,13 +246,15 @@ const dataStore = {
   },
 
   async updateProduct(id, data) {
+    if (!id) return null;
+    const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
         const p = await Product.findByIdAndUpdate(id, data, { new: true }).lean();
         if (p) return p;
       } catch (e) { }
     }
-    const idx = memoryStore.products.findIndex(p => p._id.toString() === id.toString());
+    const idx = memoryStore.products.findIndex(p => p && p._id && String(p._id) === targetId);
     if (idx !== -1) {
       memoryStore.products[idx] = { ...memoryStore.products[idx], ...data, updatedAt: new Date().toISOString() };
       return memoryStore.products[idx];
@@ -259,6 +263,8 @@ const dataStore = {
   },
 
   async deleteProduct(id) {
+    if (!id) return false;
+    const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
         await Product.findByIdAndDelete(id);
@@ -266,7 +272,7 @@ const dataStore = {
       } catch (e) { }
     }
     const initialLen = memoryStore.products.length;
-    memoryStore.products = memoryStore.products.filter(p => p._id.toString() !== id.toString());
+    memoryStore.products = memoryStore.products.filter(p => !p || !p._id || String(p._id) !== targetId);
     return memoryStore.products.length < initialLen;
   },
 
@@ -291,13 +297,15 @@ const dataStore = {
   },
 
   async findUserById(id) {
+    if (!id) return null;
+    const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
         const user = await User.findById(id).select('-password').lean();
         if (user) return user;
       } catch (e) { }
     }
-    const user = memoryStore.users.find(u => u._id.toString() === id.toString());
+    const user = memoryStore.users.find(u => u && u._id && String(u._id) === targetId);
     if (!user) return null;
     const { password, ...sanitized } = user;
     return sanitized;
@@ -329,13 +337,15 @@ const dataStore = {
   },
 
   async updateUser(id, updateData) {
+    if (!id) return null;
+    const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
         const user = await User.findByIdAndUpdate(id, updateData, { new: true }).select('-password').lean();
         if (user) return user;
       } catch (e) { }
     }
-    const idx = memoryStore.users.findIndex(u => u._id.toString() === id.toString());
+    const idx = memoryStore.users.findIndex(u => u && u._id && String(u._id) === targetId);
     if (idx !== -1) {
       memoryStore.users[idx] = { ...memoryStore.users[idx], ...updateData, updatedAt: new Date().toISOString() };
       const { password, ...sanitized } = memoryStore.users[idx];
@@ -400,6 +410,8 @@ const dataStore = {
   },
 
   async deleteTeamMember(id) {
+    if (!id) return false;
+    const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
         const user = await User.findById(id);
@@ -410,7 +422,7 @@ const dataStore = {
         return true;
       } catch (e) { }
     }
-    const idx = memoryStore.users.findIndex(u => u._id.toString() === id.toString());
+    const idx = memoryStore.users.findIndex(u => u && u._id && String(u._id) === targetId);
     if (idx !== -1) {
       if (memoryStore.users[idx].isPrimaryAdmin || memoryStore.users[idx].email === 'rishabh@roamready.com' || memoryStore.users[idx].email === 'admin@roamready.com') {
         throw new Error('Cannot delete primary super admin');
@@ -525,25 +537,29 @@ const dataStore = {
   },
 
   async findOrdersByUser(userId) {
+    if (!userId) return [];
+    const targetUserId = String(userId);
     if (getDBStatus().isConnected) {
       try {
         const orders = await Order.find({ user: userId }).sort({ createdAt: -1 }).lean();
         if (orders && orders.length > 0) return orders;
       } catch (e) { }
     }
-    return memoryStore.orders.filter(o => o.user && o.user.toString() === userId.toString());
+    return memoryStore.orders.filter(o => o && o.user && String(o.user) === targetUserId);
   },
 
   async findOrderByIdOrNumber(idOrNumber) {
+    if (!idOrNumber) return null;
+    const target = String(idOrNumber);
     if (getDBStatus().isConnected) {
       try {
         const order = await Order.findOne({
-          $or: [{ orderNumber: idOrNumber }, { _id: idOrNumber }]
+          $or: [{ orderNumber: target }, { _id: idOrNumber }]
         }).lean();
         if (order) return order;
       } catch (e) { }
     }
-    return memoryStore.orders.find(o => o.orderNumber === idOrNumber || o._id.toString() === idOrNumber.toString()) || null;
+    return memoryStore.orders.find(o => o && (String(o.orderNumber) === target || (o._id && String(o._id) === target))) || null;
   },
 
   async getAllOrders() {

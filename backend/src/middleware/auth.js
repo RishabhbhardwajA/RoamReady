@@ -16,11 +16,12 @@ const protect = async (req, res, next) => {
   }
 
   const decoded = verifyToken(token);
-  if (!decoded) {
+  const userId = decoded?.id || decoded?._id || decoded?.userId;
+  if (!decoded || !userId) {
     return ApiResponse.error(res, 'Invalid or expired session token. Please log in again.', 401);
   }
 
-  const user = await dataStore.findUserById(decoded.id);
+  const user = await dataStore.findUserById(userId);
   if (!user) {
     return ApiResponse.error(res, 'User not found.', 401);
   }
@@ -39,8 +40,9 @@ const optionalAuth = async (req, res, next) => {
 
   if (token) {
     const decoded = verifyToken(token);
-    if (decoded) {
-      const user = await dataStore.findUserById(decoded.id);
+    const userId = decoded?.id || decoded?._id || decoded?.userId;
+    if (userId) {
+      const user = await dataStore.findUserById(userId);
       if (user) {
         req.user = user;
       }
