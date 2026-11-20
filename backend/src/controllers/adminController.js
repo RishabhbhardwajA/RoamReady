@@ -43,7 +43,23 @@ const createProduct = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const updated = await dataStore.updateProduct(id, req.body);
+    const updateData = { ...req.body };
+
+    if (updateData.price && updateData.originalPrice) {
+      updateData.discountPercent = Math.round(
+        ((Number(updateData.originalPrice) - Number(updateData.price)) / Number(updateData.originalPrice)) * 100
+      );
+    }
+    if (updateData.categorySlug) {
+      updateData.categoryName = updateData.categorySlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+    if (updateData.thumbnail) {
+      if (!updateData.images || updateData.images.length === 0) {
+        updateData.images = [updateData.thumbnail];
+      }
+    }
+
+    const updated = await dataStore.updateProduct(id, updateData);
     if (!updated) {
       return ApiResponse.error(res, 'Product not found', 404);
     }

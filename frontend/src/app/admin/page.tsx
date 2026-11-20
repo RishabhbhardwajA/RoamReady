@@ -33,10 +33,15 @@ import {
   Shield,
   KeyRound,
   Copy,
-  AlertCircle
+  AlertCircle,
+  Edit2,
+  UploadCloud,
+  Maximize2,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { apiClient, formatINR } from '@/lib/api';
+import { compressImage, CompressionResult } from '@/lib/imageCompressor';
 import { Product, Order, User, Coupon, Review, AdminMetrics } from '@/types';
 
 type AdminTab = 'overview' | 'products' | 'orders' | 'customers' | 'coupons' | 'reviews' | 'team';
@@ -80,7 +85,7 @@ export default function AdminDashboardPage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  // Product Modal
+  // Product Create Modal
   const [showProductModal, setShowProductModal] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newCategory, setNewCategory] = useState('tsa-locks');
@@ -91,6 +96,29 @@ export default function AdminDashboardPage() {
   const [newShortDesc, setNewShortDesc] = useState('');
   const [newBadge, setNewBadge] = useState('New Launch');
   const [isSavingProduct, setIsSavingProduct] = useState(false);
+  const [newCompressionStats, setNewCompressionStats] = useState<CompressionResult | null>(null);
+  const [isCompressingNewImage, setIsCompressingNewImage] = useState(false);
+
+  // Product Edit Modal
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editCategory, setEditCategory] = useState('tsa-locks');
+  const [editPrice, setEditPrice] = useState('699');
+  const [editOriginalPrice, setEditOriginalPrice] = useState('1299');
+  const [editStock, setEditStock] = useState('50');
+  const [editImage, setEditImage] = useState('');
+  const [editShortDesc, setEditShortDesc] = useState('');
+  const [editBadge, setEditBadge] = useState('New Launch');
+  const [isUpdatingProduct, setIsUpdatingProduct] = useState(false);
+  const [editCompressionStats, setEditCompressionStats] = useState<CompressionResult | null>(null);
+  const [isCompressingEditImage, setIsCompressingEditImage] = useState(false);
+
+  // Natural View Lightbox
+  const [naturalViewImage, setNaturalViewImage] = useState<{
+    url: string;
+    title: string;
+  } | null>(null);
 
   // Coupon Modal
   const [showCouponModal, setShowCouponModal] = useState(false);
@@ -178,6 +206,92 @@ export default function AdminDashboardPage() {
       setLoginError(err.message || 'Login failed. Ensure account has admin privileges.');
     } finally {
       setLoginLoading(false);
+    }
+  };
+
+  const handleImageUploadForCreate = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsCompressingNewImage(true);
+    try {
+      const result = await compressImage(file, { maxDimension: 1200, quality: 0.82 });
+      setNewImage(result.dataUrl);
+      setNewCompressionStats(result);
+      showToast(`Image compressed! ${result.originalSizeFormatted} → ${result.compressedSizeFormatted} (${result.savedPercent}% saved)`);
+    } catch (err: any) {
+      showToast(err.message || 'Failed to compress image', 'error');
+    } finally {
+      setIsCompressingNewImage(false);
+    }
+  };
+
+  const handleImageUploadForEdit = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsCompressingEditImage(true);
+    try {
+      const result = await compressImage(file, { maxDimension: 1200, quality: 0.82 });
+      setEditImage(result.dataUrl);
+      setEditCompressionStats(result);
+      showToast(`Image compressed! ${result.originalSizeFormatted} → ${result.compressedSizeFormatted} (${result.savedPercent}% saved)`);
+    } catch (err: any) {
+      showToast(err.message || 'Failed to compress image', 'error');
+    } finally {
+      setIsCompressingEditImage(false);
+    }
+  };
+
+  const openEditProductModal = (product: Product) => {
+    setEditingProduct(product);
+    setEditTitle(product.title || '');
+    setEditCategory(product.categorySlug || 'tsa-locks');
+    setEditPrice(String(product.price || 0));
+    setEditOriginalPrice(String(product.originalPrice || 0));
+    setEditStock(String(product.stock || 0));
+    setEditBadge(product.badge || '');
+    setEditShortDesc(product.shortDescription || '');
+    setEditImage(product.thumbnail || '');
+    setEditCompressionStats(null);
+    setShowEditProductModal(true);
+  };
+
+  const handleUpdateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+    setIsUpdatingProduct(true);
+    try {
+      const priceNum = Number(editPrice);
+      const originalPriceNum = Number(editOriginalPrice);
+      const discountPercent = originalPriceNum > 0
+        ? Math.round(((originalPriceNum - priceNum) / originalPriceNum) * 100)
+        : 0;
+
+      const payload = {
+        title: editTitle,
+        price: priceNum,
+        originalPrice: originalPriceNum,
+        discountPercent,
+        stock: Number(editStock),
+        categorySlug: editCategory,
+        categoryName: editCategory.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        shortDescription: editShortDesc || editTitle,
+        thumbnail: editImage,
+        images: [editImage],
+        badge: editBadge,
+      };
+
+      const res = await apiClient.put(`/admin/products/${editingProduct._id}`, payload);
+      if (res.data.success) {
+        const updated = res.data.data.product;
+        setProducts(products.map(p => p._id === editingProduct._id ? updated : p));
+        setShowEditProductModal(false);
+        setEditingProduct(null);
+        showToast('Product updated successfully!');
+      }
+    } catch (err: any) {
+      showToast(err.response?.data?.message || 'Failed to update product', 'error');
+    } finally {
+      setIsUpdatingProduct(false);
     }
   };
 
@@ -772,7 +886,16 @@ export default function AdminDashboardPage() {
                       <tr key={p._id} className="hover:bg-brand-50/30 transition-colors">
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <img src={p.thumbnail} alt={p.title} className="w-11 h-11 object-cover rounded-2xl border border-slate-100 flex-shrink-0" />
+                            <div
+                              onClick={() => setNaturalViewImage({ url: p.thumbnail, title: p.title })}
+                              className="relative cursor-pointer group flex-shrink-0"
+                              title="Click to view in natural form"
+                            >
+                              <img src={p.thumbnail} alt={p.title} className="w-11 h-11 object-cover rounded-2xl border border-slate-100 group-hover:ring-2 group-hover:ring-brand-400 transition-all" />
+                              <span className="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
+                                <Maximize2 className="w-3.5 h-3.5" />
+                              </span>
+                            </div>
                             <div>
                               <div className="font-bold text-slate-900 line-clamp-1 max-w-[160px]">{p.title}</div>
                               <div className="text-[10px] font-mono text-slate-400">{p.sku}</div>
@@ -803,13 +926,29 @@ export default function AdminDashboardPage() {
                           )}
                         </td>
                         <td className="p-4 text-right">
-                          <button
-                            onClick={() => handleDeleteProduct(p._id)}
-                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => setNaturalViewImage({ url: p.thumbnail, title: p.title })}
+                              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                              title="View Natural Form"
+                            >
+                              <Maximize2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => openEditProductModal(p)}
+                              className="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-xl transition-all"
+                              title="Edit Product & Image"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProduct(p._id)}
+                              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                              title="Delete Product"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1227,10 +1366,57 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
+              {/* Image Upload & Auto-Compression */}
               <div>
-                <label className="text-xs font-bold text-slate-600 block mb-1.5">Image URL *</label>
-                <input type="url" required value={newImage} onChange={e => setNewImage(e.target.value)}
-                  className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-slate-600 block">Product Image *</label>
+                  <span className="text-[10px] text-brand-600 font-bold">Auto-Compressed to WebP</span>
+                </div>
+
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="flex-1 cursor-pointer flex items-center justify-center gap-2 border-2 border-dashed border-brand-300 hover:border-brand-500 bg-brand-50/60 hover:bg-brand-50 rounded-2xl py-2.5 px-3 text-xs font-bold text-brand-700 transition-all">
+                    <UploadCloud className="w-4 h-4 text-brand-600" />
+                    <span>{isCompressingNewImage ? 'Compressing Image…' : 'Upload & Compress to DB'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUploadForCreate}
+                    />
+                  </label>
+                  {newImage && (
+                    <button
+                      type="button"
+                      onClick={() => setNaturalViewImage({ url: newImage, title: newTitle || 'Image Preview' })}
+                      className="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-2xl text-slate-700 transition-all flex items-center gap-1.5 text-xs font-bold"
+                      title="View Natural Form"
+                    >
+                      <Maximize2 className="w-4 h-4 text-slate-600" />
+                      <span className="text-[11px] hidden sm:inline">Natural View</span>
+                    </button>
+                  )}
+                </div>
+
+                {newCompressionStats && (
+                  <div className="mb-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-[11px] text-emerald-800 font-bold">
+                    <div className="flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                      <span>{newCompressionStats.originalSizeFormatted} → {newCompressionStats.compressedSizeFormatted}</span>
+                    </div>
+                    <span className="bg-emerald-200/80 text-emerald-900 px-2 py-0.5 rounded-full text-[10px]">
+                      {newCompressionStats.savedPercent}% saved in DB
+                    </span>
+                  </div>
+                )}
+
+                <input
+                  type="text"
+                  required
+                  placeholder="Or enter Image URL (https://...)"
+                  value={newImage}
+                  onChange={e => setNewImage(e.target.value)}
+                  className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-300 font-mono truncate"
+                />
               </div>
 
               <div>
@@ -1251,6 +1437,234 @@ export default function AdminDashboardPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════ MODAL: EDIT PRODUCT ══════════════ */}
+      {showEditProductModal && editingProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-950/70 backdrop-blur-md">
+          <div className="glass-panel max-w-md w-full p-7 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="bg-brand-500/10 text-brand-700 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-brand-200">
+                  SKU: {editingProduct.sku}
+                </span>
+                <h3 className="font-black text-base text-slate-900 mt-1">Edit Travel Gear</h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowEditProductModal(false);
+                  setEditingProduct(null);
+                }}
+                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                <X className="w-4 h-4 text-slate-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateProduct} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">Product Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={editTitle}
+                  onChange={e => setEditTitle(e.target.value)}
+                  className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1.5">Category *</label>
+                  <select
+                    value={editCategory}
+                    onChange={e => setEditCategory(e.target.value)}
+                    className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                  >
+                    <option value="tsa-locks">TSA Locks</option>
+                    <option value="luggage-straps">Luggage Straps</option>
+                    <option value="packing-cubes">Packing Cubes</option>
+                    <option value="neck-pillows">Neck Pillows</option>
+                    <option value="travel-adapters">Travel Adapters</option>
+                    <option value="travel-kits">Travel Kits</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1.5">Badge</label>
+                  <select
+                    value={editBadge}
+                    onChange={e => setEditBadge(e.target.value)}
+                    className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                  >
+                    <option value="New Launch">New Launch</option>
+                    <option value="Bestseller">Bestseller</option>
+                    <option value="Top Rated">Top Rated</option>
+                    <option value="Limited">Limited</option>
+                    <option value="">No Badge</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1.5">Price (₹) *</label>
+                  <input
+                    type="number"
+                    required
+                    value={editPrice}
+                    onChange={e => setEditPrice(e.target.value)}
+                    className="w-full bg-white/70 border border-slate-200 rounded-2xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1.5">MRP (₹) *</label>
+                  <input
+                    type="number"
+                    required
+                    value={editOriginalPrice}
+                    onChange={e => setEditOriginalPrice(e.target.value)}
+                    className="w-full bg-white/70 border border-slate-200 rounded-2xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1.5">Stock *</label>
+                  <input
+                    type="number"
+                    required
+                    value={editStock}
+                    onChange={e => setEditStock(e.target.value)}
+                    className="w-full bg-white/70 border border-slate-200 rounded-2xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                  />
+                </div>
+              </div>
+
+              {/* Image Upload & Auto-Compression */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-slate-600 block">Product Image *</label>
+                  <span className="text-[10px] text-brand-600 font-bold">Auto-Compressed to WebP</span>
+                </div>
+
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="flex-1 cursor-pointer flex items-center justify-center gap-2 border-2 border-dashed border-brand-300 hover:border-brand-500 bg-brand-50/60 hover:bg-brand-50 rounded-2xl py-2.5 px-3 text-xs font-bold text-brand-700 transition-all">
+                    <UploadCloud className="w-4 h-4 text-brand-600" />
+                    <span>{isCompressingEditImage ? 'Compressing Image…' : 'Upload & Compress to DB'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUploadForEdit}
+                    />
+                  </label>
+                  {editImage && (
+                    <button
+                      type="button"
+                      onClick={() => setNaturalViewImage({ url: editImage, title: editTitle || 'Image Preview' })}
+                      className="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-2xl text-slate-700 transition-all flex items-center gap-1.5 text-xs font-bold"
+                      title="View Natural Form"
+                    >
+                      <Maximize2 className="w-4 h-4 text-slate-600" />
+                      <span className="text-[11px] hidden sm:inline">Natural View</span>
+                    </button>
+                  )}
+                </div>
+
+                {editCompressionStats && (
+                  <div className="mb-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-[11px] text-emerald-800 font-bold">
+                    <div className="flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                      <span>{editCompressionStats.originalSizeFormatted} → {editCompressionStats.compressedSizeFormatted}</span>
+                    </div>
+                    <span className="bg-emerald-200/80 text-emerald-900 px-2 py-0.5 rounded-full text-[10px]">
+                      {editCompressionStats.savedPercent}% saved in DB
+                    </span>
+                  </div>
+                )}
+
+                <input
+                  type="text"
+                  placeholder="Or enter Image URL (https://...)"
+                  value={editImage}
+                  onChange={e => setEditImage(e.target.value)}
+                  className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-300 font-mono truncate"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">Short Description</label>
+                <input
+                  type="text"
+                  value={editShortDesc}
+                  onChange={e => setEditShortDesc(e.target.value)}
+                  className="w-full bg-white/70 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditProductModal(false);
+                    setEditingProduct(null);
+                  }}
+                  className="w-1/2 py-3 rounded-full border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isUpdatingProduct}
+                  className="w-1/2 bg-brand-600 hover:bg-brand-500 text-white font-black py-3 rounded-full text-xs shadow-lg shadow-brand-600/25 transition-all disabled:opacity-50"
+                >
+                  {isUpdatingProduct ? 'Updating…' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════ MODAL: NATURAL VIEW LIGHTBOX ══════════════ */}
+      {naturalViewImage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-950/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="glass-dark max-w-2xl w-full p-6 space-y-4 shadow-2xl border border-white/10 rounded-3xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="bg-brand-500/20 text-brand-300 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border border-brand-400/20">
+                  Natural Form (Decompressed High-Res Rendering)
+                </span>
+                <h3 className="font-black text-base text-white mt-1">{naturalViewImage.title}</h3>
+              </div>
+              <button
+                onClick={() => setNaturalViewImage(null)}
+                className="p-2 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="relative rounded-2xl overflow-hidden bg-slate-950/80 border border-white/10 flex items-center justify-center min-h-[300px] max-h-[500px]">
+              <img
+                src={naturalViewImage.url}
+                alt={naturalViewImage.title}
+                className="max-h-[480px] w-auto max-w-full object-contain rounded-xl shadow-lg"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10 gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Stored compressed in DB · Rendered in natural pixel aspect ratio</span>
+              </div>
+              <button
+                onClick={() => setNaturalViewImage(null)}
+                className="bg-white/10 hover:bg-white/20 text-white font-bold text-xs px-4 py-2 rounded-full transition-colors"
+              >
+                Close View
+              </button>
+            </div>
           </div>
         </div>
       )}
