@@ -309,8 +309,8 @@ export default function AdminDashboardPage() {
         categoryName: newCategory.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
         shortDescription: newShortDesc || newTitle,
         description: `${newTitle} engineered specifically for frequent travelers and airport transit.`,
-        thumbnail: newImage,
-        images: [newImage],
+        thumbnail: newImage || 'https://images.unsplash.com/photo-1582139329536-e7284fece509?w=800&auto=format&fit=crop&q=80',
+        images: [newImage || 'https://images.unsplash.com/photo-1582139329536-e7284fece509?w=800&auto=format&fit=crop&q=80'],
         badge: newBadge,
         brand: 'RoamReady',
         specifications: {
@@ -327,7 +327,7 @@ export default function AdminDashboardPage() {
           colorName: 'Midnight Black',
           colorHex: '#0F172A',
           size: 'Standard',
-          image: newImage,
+          image: newImage || 'https://images.unsplash.com/photo-1582139329536-e7284fece509?w=800&auto=format&fit=crop&q=80',
           stockCount: Number(newStock),
           inStock: true,
         }],
@@ -338,10 +338,12 @@ export default function AdminDashboardPage() {
         setShowProductModal(false);
         setNewTitle('');
         setNewShortDesc('');
-        showToast('Product added to catalog!');
+        setNewImage('');
+        setNewCompressionStats(null);
+        showToast('Product added to catalog and saved permanently in database!');
       }
-    } catch (err) {
-      showToast('Failed to create product', 'error');
+    } catch (err: any) {
+      showToast(err.response?.data?.message || 'Failed to create product', 'error');
     } finally {
       setIsSavingProduct(false);
     }

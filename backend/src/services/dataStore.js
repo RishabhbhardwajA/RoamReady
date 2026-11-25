@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { getDBStatus } = require('../config/db');
 const Product = require('../models/Product');
@@ -109,7 +110,7 @@ const dataStore = {
         const cats = await Category.find({ isActive: true }).sort({ displayOrder: 1 }).lean();
         if (cats && cats.length > 0) return cats;
       } catch (e) {
-        console.warn('MongoDB query failed, falling back to memoryStore:', e.message);
+        console.warn('[RoamReady DB] Category query error, using fallback:', e.message);
       }
     }
     return memoryStore.categories;
@@ -160,11 +161,14 @@ const dataStore = {
           .limit(Number(limit))
           .lean();
 
-        if (products && products.length > 0) {
-          return { products, total, totalPages: Math.ceil(total / limit), currentPage: Number(page) };
-        }
+        return {
+          products,
+          total,
+          totalPages: Math.ceil(total / limit) || 1,
+          currentPage: Number(page)
+        };
       } catch (e) {
-        console.warn('MongoDB query failed, using memoryStore:', e.message);
+        console.warn('[RoamReady DB] Product query error, falling back to memoryStore:', e.message);
       }
     }
 
@@ -221,22 +225,95 @@ const dataStore = {
     const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
-        const prod = await Product.findById(id).lean();
+        let prod = null;
+        if (mongoose.isValidObjectId(id)) {
+          prod = await Product.findById(id).lean();
+        }
+        if (!prod) {
+          prod = await Product.findOne({ $or: [{ slug: targetId }, { sku: targetId }] }).lean();
+        }
         if (prod) return prod;
       } catch (e) { }
     }
-    return memoryStore.products.find(p => p && p._id && String(p._id) === targetId) || null;
+    return memoryStore.products.find(p => p && p._id && (String(p._id) === targetId || p.slug === targetId || p.sku === targetId)) || null;
   },
 
   async createProduct(data) {
+    const cleanTitle = (data.title || 'Untitled Travel Essential').trim();
+    const cleanSlug = data.slug || (cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now().toString().slice(-4));
+    const cleanSku = data.sku || `RR-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    const cleanPrice = Number(data.price) || 499;
+    const cleanOriginalPrice = Number(data.originalPrice) || Math.round(cleanPrice * 1.4);
+    const cleanCategorySlug = data.categorySlug || 'tsa-locks';
+    const cleanCategoryName = data.categoryName || cleanCategorySlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const cleanThumbnail = data.thumbnail || (Array.isArray(data.images) && data.images[0]) || 'https://images.unsplash.com/photo-1582139329536-e7284fece509?w=800&auto=format&fit=crop&q=80';
+    const cleanImages = (Array.isArray(data.images) && data.images.filter(Boolean).length > 0)
+      ? data.images.filter(Boolean)
+      : [cleanThumbnail];
+
+    const sanitizedData = {
+      title: cleanTitle,
+      slug: cleanSlug,
+      sku: cleanSku,
+      price: cleanPrice,
+      originalPrice: cleanOriginalPrice,
+      discountPercent: Math.round(((cleanOriginalPrice - cleanPrice) / cleanOriginalPrice) * 100),
+      categorySlug: cleanCategorySlug,
+      categoryName: cleanCategoryName,
+      thumbnail: cleanThumbnail,
+      images: cleanImages,
+      shortDescription: data.shortDescription || cleanTitle,
+      description: data.description || `${cleanTitle} engineered specifically for frequent travelers and airport transit.`,
+      stock: data.stock !== undefined ? Number(data.stock) : 50,
+      brand: data.brand || 'RoamReady',
+      badge: data.badge || 'New Launch',
+      rating: data.rating !== undefined ? Number(data.rating) : 4.8,
+      reviewCount: data.reviewCount !== undefined ? Number(data.reviewCount) : 0,
+      isFeatured: Boolean(data.isFeatured),
+      isBestseller: Boolean(data.isBestseller),
+      isNewArrival: data.isNewArrival !== undefined ? Boolean(data.isNewArrival) : true,
+      tags: Array.isArray(data.tags) && data.tags.length > 0 ? data.tags : [cleanCategorySlug, 'travel', 'essentials'],
+      specifications: data.specifications || {
+        material: 'High-Density Reinforced Alloy / Ripstop Nylon',
+        dimensions: 'Standard Travel Dimensions',
+        weight: '150 grams',
+        warranty: '2-Year Warranty',
+        originCountry: 'India'
+      },
+      variants: (Array.isArray(data.variants) && data.variants.length > 0) ? data.variants : [{
+        id: `var-${Date.now()}`,
+        name: 'Standard Edition',
+        sku: `${cleanSku}-STD`,
+        colorName: 'Midnight Black',
+        colorHex: '#0F172A',
+        size: 'Standard',
+        image: cleanThumbnail,
+        stockCount: data.stock !== undefined ? Number(data.stock) : 50,
+        inStock: true
+      }],
+      luggageCompatibility: data.luggageCompatibility || ['Cabin', 'Check-in', 'All Bags'],
+      faq: data.faq || [
+        { question: 'Is this travel essential TSA compliant?', answer: 'Yes, fully tested and compliant with airport standards.' }
+      ],
+      isTravelKit: Boolean(data.isTravelKit),
+      bundleItems: data.bundleItems || []
+    };
+
     if (getDBStatus().isConnected) {
       try {
-        const p = await Product.create(data);
-        return p.toObject();
-      } catch (e) { }
+        const p = await Product.create(sanitizedData);
+        console.log(`[RoamReady DB] Product successfully saved to MongoDB Atlas: ${p._id} (${p.title})`);
+        const obj = p.toObject();
+        memoryStore.products.unshift(obj);
+        return obj;
+      } catch (e) {
+        console.error('[RoamReady DB] Failed to save product to MongoDB Atlas:', e.message);
+        throw e;
+      }
     }
+
     const newProd = {
-      ...data,
+      ...sanitizedData,
       _id: `prod_${Date.now()}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -250,9 +327,27 @@ const dataStore = {
     const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
-        const p = await Product.findByIdAndUpdate(id, data, { new: true }).lean();
-        if (p) return p;
-      } catch (e) { }
+        let p = null;
+        if (mongoose.isValidObjectId(id)) {
+          p = await Product.findByIdAndUpdate(id, data, { new: true, runValidators: true }).lean();
+        }
+        if (!p) {
+          p = await Product.findOneAndUpdate(
+            { $or: [{ slug: targetId }, { sku: targetId }] },
+            data,
+            { new: true, runValidators: true }
+          ).lean();
+        }
+        if (p) {
+          console.log(`[RoamReady DB] Product updated in MongoDB Atlas: ${p._id} (${p.title})`);
+          const idx = memoryStore.products.findIndex(m => m && (String(m._id) === targetId || m.slug === targetId || m.sku === targetId));
+          if (idx !== -1) memoryStore.products[idx] = { ...memoryStore.products[idx], ...p };
+          return p;
+        }
+      } catch (e) {
+        console.error('[RoamReady DB] Failed to update product in MongoDB Atlas:', e.message);
+        throw e;
+      }
     }
     const idx = memoryStore.products.findIndex(p => p && p._id && String(p._id) === targetId);
     if (idx !== -1) {
@@ -267,9 +362,22 @@ const dataStore = {
     const targetId = String(id);
     if (getDBStatus().isConnected) {
       try {
-        await Product.findByIdAndDelete(id);
-        return true;
-      } catch (e) { }
+        let deleted = null;
+        if (mongoose.isValidObjectId(id)) {
+          deleted = await Product.findByIdAndDelete(id);
+        }
+        if (!deleted) {
+          deleted = await Product.findOneAndDelete({ $or: [{ slug: targetId }, { sku: targetId }] });
+        }
+        if (deleted) {
+          console.log(`[RoamReady DB] Product deleted from MongoDB Atlas: ${id}`);
+          memoryStore.products = memoryStore.products.filter(p => !p || !p._id || (String(p._id) !== targetId && p.slug !== targetId && p.sku !== targetId));
+          return true;
+        }
+      } catch (e) {
+        console.error('[RoamReady DB] Failed to delete product from MongoDB Atlas:', e.message);
+        throw e;
+      }
     }
     const initialLen = memoryStore.products.length;
     memoryStore.products = memoryStore.products.filter(p => !p || !p._id || String(p._id) !== targetId);
