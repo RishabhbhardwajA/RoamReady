@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Compass, ShieldCheck, Truck, RefreshCw, Mail, CheckCircle2 } from 'lucide-react';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -47,10 +48,8 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-5 gap-10 mb-12">
         {/* Brand Column */}
         <div className="md:col-span-2 space-y-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-obsidian-800 border border-slate-700 flex items-center justify-center text-amber-accent">
-              <Compass className="w-5 h-5 text-amber-accent" />
-            </div>
+          <Link href="/" className="flex items-center gap-2.5 group w-fit">
+            <BrandLogo size={38} className="rounded-xl shadow-md group-hover:scale-105 transition-transform border border-white/10" />
             <span className="font-extrabold text-xl tracking-tight text-white">
               ROAM<span className="text-brand-500">READY</span>
             </span>

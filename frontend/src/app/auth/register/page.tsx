@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Compass, Lock, Mail, User, Phone, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, User, Phone, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -51,10 +52,8 @@ export default function RegisterPage() {
     <div className="bg-slate-50 min-h-screen py-12 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/80 shadow-xl space-y-6">
         <div className="text-center space-y-2">
-          <Link href="/" className="inline-flex items-center gap-2 group mb-2">
-            <div className="w-10 h-10 rounded-xl bg-obsidian-950 flex items-center justify-center text-amber-accent shadow-md">
-              <Compass className="w-5 h-5 text-amber-accent" />
-            </div>
+          <Link href="/" className="inline-flex items-center gap-2.5 group mb-2">
+            <BrandLogo size={40} className="rounded-xl shadow-md group-hover:scale-105 transition-transform" />
             <span className="font-extrabold text-xl tracking-tight text-slate-900">
               ROAM<span className="text-brand-600">READY</span>
             </span>

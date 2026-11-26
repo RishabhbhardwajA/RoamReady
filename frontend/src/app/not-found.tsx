@@ -1,13 +1,12 @@
 import Link from 'next/link';
-import { Compass, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 
 export default function NotFound() {
   return (
     <div className="bg-slate-50 min-h-[70vh] flex items-center justify-center px-4 py-16">
       <div className="max-w-md w-full bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 text-center space-y-4 shadow-sm">
-        <div className="w-16 h-16 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center mx-auto">
-          <Compass className="w-8 h-8" />
-        </div>
+        <BrandLogo size={64} className="rounded-2xl shadow-lg mx-auto" />
         <h1 className="text-4xl font-extrabold text-slate-900">404</h1>
         <h2 className="text-base font-bold text-slate-800">You seem to have strayed off-route</h2>
         <p className="text-xs text-slate-500">

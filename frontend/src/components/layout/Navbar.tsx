@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Compass,
   Search,
   ShoppingBag,
   Heart,
@@ -21,6 +20,7 @@ import {
   Tag,
   Briefcase
 } from 'lucide-react';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -95,9 +95,7 @@ export const Navbar: React.FC = () => {
 
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-2xl bg-obsidian-900 flex items-center justify-center text-amber-accent shadow-md group-hover:scale-105 transition-transform border border-white/20">
-              <Compass className="w-5 h-5 text-amber-accent" />
-            </div>
+            <BrandLogo size={40} className="rounded-xl shadow-md group-hover:scale-105 transition-transform border border-white/15" />
             <div className="flex flex-col">
               <span className="font-extrabold text-xl tracking-tight text-obsidian-900 font-sans flex items-center gap-1">
                 ROAM<span className="text-brand-600">READY</span>

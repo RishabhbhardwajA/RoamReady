@@ -23,7 +23,6 @@ import {
   ArrowUpRight,
   Layers,
   Activity,
-  Crown,
   Zap,
   UserCheck,
   UserPlus,
@@ -39,6 +38,7 @@ import {
   Maximize2,
   Sparkles
 } from 'lucide-react';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 import { useAuth } from '@/context/AuthContext';
 import { apiClient, formatINR } from '@/lib/api';
 import { compressImage, CompressionResult } from '@/lib/imageCompressor';
@@ -468,9 +468,7 @@ export default function AdminDashboardPage() {
         <div className="relative glass-dark max-w-lg w-full p-8 sm:p-10 text-left space-y-6 border border-white/10 shadow-2xl">
           {/* Header */}
           <div className="text-center space-y-2">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/30">
-              <Crown className="w-7 h-7 text-obsidian-950" />
-            </div>
+            <BrandLogo size={56} className="rounded-2xl shadow-lg shadow-amber-500/20 mx-auto border border-white/10" />
             <h2 className="text-2xl font-black text-white tracking-tight">RoamReady Command Center</h2>
             <p className="text-xs text-slate-400">
               Hidden management console for store administrators & team leads.
@@ -595,18 +593,21 @@ export default function AdminDashboardPage() {
 
         {/* ── HEADER ── */}
         <div className="glass-dark p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="bg-amber-400/20 text-amber-300 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-amber-400/20">
-                {user.teamRole || 'Store Administrator'}
-              </span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs text-slate-400">Live Team Portal</span>
+          <div className="flex items-start sm:items-center gap-4">
+            <BrandLogo size={52} className="rounded-2xl shadow-lg border border-white/10 hidden sm:inline-block" />
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="bg-amber-400/20 text-amber-300 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-amber-400/20">
+                  {user.teamRole || 'Store Administrator'}
+                </span>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs text-slate-400">Live Team Portal</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                RoamReady Command Center
+              </h1>
+              <p className="text-xs text-slate-400 mt-0.5">Signed in as <strong className="text-slate-200">{user.name}</strong> ({user.email})</p>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              RoamReady Command Center
-            </h1>
-            <p className="text-xs text-slate-400 mt-0.5">Signed in as <strong className="text-slate-200">{user.name}</strong> ({user.email})</p>
           </div>
           <div className="flex items-center gap-3">
             <button

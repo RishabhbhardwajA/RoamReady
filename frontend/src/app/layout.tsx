@@ -31,6 +31,17 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
+  openGraph: {
+    title: 'RoamReady — Engineered Travel Gear Essentials & Luggage Accessories',
+    description: 'Specialised online store for TSA combination locks, privacy luggage tags, compression packing cubes, heavy-duty baggage straps, and packable travel duffels.',
+    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'RoamReady Logo' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'RoamReady — Engineered Travel Gear Essentials & Luggage Accessories',
+    description: 'Specialised online store for TSA combination locks, privacy luggage tags, compression packing cubes, heavy-duty baggage straps, and packable travel duffels.',
+    images: ['/icon-512.png'],
+  },
 };
 
 export default function RootLayout({
