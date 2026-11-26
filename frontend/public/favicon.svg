@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Deep Midnight Navy Badge -->
+  <rect width="64" height="64" rx="14" fill="#0f1626" />
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" fill="none" stroke="#1e293b" stroke-width="1.5" />
+
+  <!-- White Telescopic Handle Rods -->
+  <rect x="24.5" y="8" width="3.2" height="9.5" fill="#ffffff" />
+  <rect x="36.3" y="8" width="3.2" height="9.5" fill="#ffffff" />
+
+  <!-- Terracotta Top Handle Grip (wrap-around caps) -->
+  <path d="M22.2 6.6C22.2 4.8 23.6 3.8 25.4 3.8H38.6C40.4 3.8 41.8 4.8 41.8 6.6V8.6C41.8 9.2 41.3 9.6 40.6 9.6H36C35.5 9.6 35.1 9.2 35.1 8.6V8.2H28.9V8.6C28.9 9.2 28.5 9.6 28 9.6H23.4C22.7 9.6 22.2 9.2 22.2 8.6Z" fill="#e15a3a" />
+
+  <!-- Top Center Carry Handle Loop -->
+  <path d="M27.8 17.5V15.4C27.8 14.1 28.8 13.4 30.2 13.4H33.8C35.2 13.4 36.2 14.1 36.2 15.4V17.5" fill="none" stroke="#e15a3a" stroke-width="2.2" stroke-linecap="round" />
+
+  <!-- Carry-On Suitcase Body (Portrait Frame) -->
+  <rect x="15.8" y="17.5" width="32.4" height="37.8" rx="5.2" fill="#0f1626" stroke="#e15a3a" stroke-width="3.2" stroke-linejoin="round" />
+
+  <!-- Four Reinforced Corner Guard Arcs -->
+  <path d="M17.4 23.4A4.6 4.6 0 0 0 21.8 19.1M42.2 19.1A4.6 4.6 0 0 0 46.6 23.4M17.4 49.4A4.6 4.6 0 0 1 21.8 53.7M42.2 53.7A4.6 4.6 0 0 1 46.6 49.4" fill="none" stroke="#e15a3a" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Bottom Corner Feet / Wheels -->
+  <path d="M19.2 55.6H25.2V58.1C25.2 59.3 24.3 60 23.1 60H21.3C20.1 60 19.2 59.3 19.2 58.1Z" fill="#e15a3a" />
+  <path d="M38.8 55.6H44.8V58.1C44.8 59.3 43.9 60 42.7 60H40.9C39.7 60 38.8 59.3 38.8 58.1Z" fill="#e15a3a" />
+
+  <!-- Golden Route Ribbon & Compass Halo Ring -->
+  <path d="M17.4 43.2 Q21.5 41.6 25.0 40.8 M38.8 33.4 L40.6 34.4 L46.6 32.8" fill="none" stroke="#dba344" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="32" cy="37.2" r="9.2" fill="none" stroke="#dba344" stroke-width="2.1" />
+
+  <!-- 8-Point Compass Rose centered at (32, 37.2) -->
+  <!-- Secondary Intercardinal Diagonal Spikes (Symmetrical Terracotta) -->
+  <polygon points="32,37.2 36.2,37.2 39.7,29.5 32,33.0" fill="#e15a3a" />
+  <polygon points="32,37.2 36.2,37.2 39.7,44.9 32,41.4" fill="#e15a3a" />
+  <polygon points="32,37.2 32,41.4 24.3,44.9 27.8,37.2" fill="#e15a3a" />
+  <polygon points="32,37.2 27.8,37.2 24.3,29.5 32,33.0" fill="#e15a3a" />
+
+  <!-- Primary Cardinal Spikes (90-deg Rotational Crisp White & Terracotta Bevel) -->
+  <polygon points="32,37.2 28.8,34.0 32,22.2" fill="#ffffff" />
+  <polygon points="32,37.2 32,22.2 35.2,34.0" fill="#e15a3a" />
+  <polygon points="32,37.2 35.2,34.0 46.8,37.2" fill="#ffffff" />
+  <polygon points="32,37.2 46.8,37.2 35.2,40.4" fill="#e15a3a" />
+  <polygon points="32,37.2 35.2,40.4 32,52.2" fill="#ffffff" />
+  <polygon points="32,37.2 32,52.2 28.8,40.4" fill="#e15a3a" />
+  <polygon points="32,37.2 28.8,40.4 17.2,37.2" fill="#ffffff" />
+  <polygon points="32,37.2 17.2,37.2 28.8,34.0" fill="#e15a3a" />
+
+  <!-- Center Cutout Circle & 45-deg Pointer Needle -->
+  <circle cx="32" cy="37.2" r="4.3" fill="#0f1626" />
+  <polygon points="27.2,42.0 30.8,36.0 33.2,38.4" fill="#ffffff" />
+  <polygon points="35.3,33.9 33.2,38.4 30.8,36.0" fill="#e15a3a" />
+  <circle cx="32" cy="37.2" r="2.2" fill="#0f1626" />
+  <circle cx="32" cy="37.2" r="1.2" fill="#ffffff" />
+</svg>

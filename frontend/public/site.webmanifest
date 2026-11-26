@@ -1,0 +1,28 @@
+{
+  "name": "RoamReady — Engineered Travel Gear Essentials",
+  "short_name": "RoamReady",
+  "description": "Specialised online store for TSA combination locks, privacy luggage tags, compression packing cubes, heavy-duty baggage straps, and packable travel duffels.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1626",
+  "theme_color": "#0f1626",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

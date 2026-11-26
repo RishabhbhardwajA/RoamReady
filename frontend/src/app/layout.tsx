@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
@@ -10,18 +10,26 @@ import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FloatingCompareBar } from '@/components/compare/FloatingCompareBar';
 
+export const viewport: Viewport = {
+  themeColor: '#0f1626',
+};
+
 export const metadata: Metadata = {
   title: 'RoamReady — Engineered Travel Gear Essentials & Luggage Accessories',
   description: 'Specialised online store for TSA combination locks, privacy luggage tags, compression packing cubes, heavy-duty baggage straps, and packable travel duffels.',
   keywords: 'TSA lock, luggage accessories, compression cubes, luggage tags, travel gear, duffel bag, flight essentials India',
+  manifest: '/site.webmanifest',
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '16x16 32x32' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
     ],
     shortcut: '/favicon.ico',
-    apple: '/apple-icon.png',
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
 };
 
